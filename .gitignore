@@ -1,8 +1,13 @@
+# General
 node_modules/
 .DS_Store
 *.log
 haters/
+
+# Frontend
 .next/
 .build/
-layout.md
-variables.env
+
+# Backend
+*.env
+prisma.graphql
