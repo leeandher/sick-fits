@@ -145,4 +145,8 @@ Prisma is an Opensource GraphQL Database Interface. Lots of big words, but simpl
 
 Instead you let Prisma do the heavy lifting and just focus on your app. All you do is pass it a *data model* using SDL (as specified above) and calling `prisma deploy` will create a complete `.graphql` schema for you, with the necessary `queries` and `mutations` that you'll need to get started. This is ALSO written in SDL, and is essentially a complete access API generated for you!
 
+However, it should be noted that you CANNOT use this API outright in the frontend. There is no authentication layer, no security layer, or any sort of custom logic if we want to add anything. Stuff like permissions, emails, hashing passwords, reset flows, all still needs to be developed. Thats where GraphQL Yoga comes in.
+
 ---
+
+## What is GraphQL Yoga?
