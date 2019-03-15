@@ -150,3 +150,6 @@ However, it should be noted that you CANNOT use this API outright in the fronten
 ---
 
 ## What is GraphQL Yoga?
+- what is built on
+- How the process works db > create Server > index (+ resolvers)
+- schema.graphql typedefs and resolvers Query and Mutation
