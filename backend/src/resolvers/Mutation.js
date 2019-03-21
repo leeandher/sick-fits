@@ -1,7 +1,9 @@
 const Mutation = {
-  createDog(parent, args, ctx, info) {
-    // Create a dog!
-    console.log(args)
+  async createItem(parent, args, ctx, info) {
+    // TODO: Check if they are logged in
+    // 'info' passes along query, so that it can get the return data
+    const item = await ctx.db.mutation.createItem({ data: { ...args } }, info)
+    return item
   }
 }
 
