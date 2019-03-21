@@ -150,12 +150,12 @@ However, it should be noted that you CANNOT use this API outright in the fronten
 ---
 
 ## What is GraphQL Yoga?
-- schema.graphql typedefs and resolvers Query and Mutation
 
 As per their official `README`, GraphQL Yoga is **a fully-featured GraphQL Server with focus on easy setup, performance & great developer experience**. Short and sweet, but what does that mean? Well, GraphQL Yoga is just a quick way to get up and running with a GraphQL endpoint. It's spec compliant, file upload capable, comes with the _GraphQL Playground IDE_, and is even extensible via middleware. It doesn't have a database or anything attached to it by default, instead it allows us to specify the resolvers, schema and type definitions by passing it in, and it will handle interpreting the queries and returning the responses appropriately.
 
 "What is this witchcraft?" you may ask. Well, like most things online nowadays, it's actually an almagamation of many smart developers code, put together in an easy to use package. In fact, it's an `express`/`apollo-server` (web server), with `graphql-subscriptions` (websocket subscription server), `graphql.js` (engine and schema), and the `graphql-playground` (interactive GraphQL IDE) all-in-one.
 
+---
 
 ## TypeDefs and Resolvers
 
@@ -167,8 +167,21 @@ The **Resolvers** do the _AP_ part in _API_. Whenever any of the services (`quer
 
 _Don't trust anyone, not even yourself_.
 
+---
+
 ## The Workflow
 
+So how will this application flow. It may be a bit confusing, but breaking it down step by step should help for clarity. It all happens at once in the backend directory root file: `index.js`.
 
+ - `index.js` is responsible for **loading environment variables**, and using these to **create the DB interface**, and **create and start the API server**.
+   - The _DB interface_ is the Prisma Client, this must be **redeployed** if new database types are introduced
+   - The _API Server_ is the GraphQL Yoga Server
+   - These both rely on some `.env` variables which are also loaded
+ - **The DB Interface** is created in `db.js`, using a binding library to the Prisma Client, essentially letting us use JS to control the server
+ - **The API Server** is setup in `createServer` and executed in `index.js`, and relies on the **typeDefs** and **resolvers** in order to generate
+   - The _typeDefs_ are in their own `schema.graphql` specification file, and are loaded/passed into the GraphQL Yoga client
+   - The _resolvers_ are have their own directory, and are specified there for each API service's operations
+   - You cannot have a **resolver** if it is not first specified in the **typeDefs**, but you can do the opposite (since what you do with each request isn't predefined)
 
+To walk through this flow, we'll 
 ---
