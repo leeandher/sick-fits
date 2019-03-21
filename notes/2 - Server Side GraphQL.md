@@ -150,6 +150,25 @@ However, it should be noted that you CANNOT use this API outright in the fronten
 ---
 
 ## What is GraphQL Yoga?
-- what is built on
-- How the process works db > create Server > index (+ resolvers)
 - schema.graphql typedefs and resolvers Query and Mutation
+
+As per their official `README`, GraphQL Yoga is **a fully-featured GraphQL Server with focus on easy setup, performance & great developer experience**. Short and sweet, but what does that mean? Well, GraphQL Yoga is just a quick way to get up and running with a GraphQL endpoint. It's spec compliant, file upload capable, comes with the _GraphQL Playground IDE_, and is even extensible via middleware. It doesn't have a database or anything attached to it by default, instead it allows us to specify the resolvers, schema and type definitions by passing it in, and it will handle interpreting the queries and returning the responses appropriately.
+
+"What is this witchcraft?" you may ask. Well, like most things online nowadays, it's actually an almagamation of many smart developers code, put together in an easy to use package. In fact, it's an `express`/`apollo-server` (web server), with `graphql-subscriptions` (websocket subscription server), `graphql.js` (engine and schema), and the `graphql-playground` (interactive GraphQL IDE) all-in-one.
+
+
+## TypeDefs and Resolvers
+
+The basis of a GraphQL is entirely dependent on the concepts of TypeDefs and Resolvers. You can't create this kind of API server without these, and messing them up could result in lots of wasted time debugging, or massive security flaws for your application. After all, the code you write here will be accessible passed on to the user of the API, and we have to always eyre on the side of caution.
+
+First of all, the **TypeDefs**. Whenever you open up your GraphQL IDE (_GraphQL Playground_, _GraphiQL_, etc.), and you click on the `Schema` tab to examine the entire API, what you are actually looking at is the **TypeDefs**. This is almost like the API Schema, a strongly typed reference for the entire API, including all of it's responses and data structures. It should include every `query`, `mutation`, and `subscription` that the API has to offer, as well as the _fields_, _types_ and _parameters_. The end-user should be able to understand how to call your API entirely from the **typeDefs** (and they will, I mean, it is the interface schema).
+
+The **Resolvers** do the _AP_ part in _API_. Whenever any of the services (`queries`, `mutations`, `subscriptions`) are called upon, they have a connected resolver which will actually perform the operation to get the data which is sent back to the user. In most cases, that will be to perform database operations with some given parameters, but don't limit yourself! You can query a RESTful endpoint, or parse a `.csv` file, or even return static data. In the case of this app, the resolvers will be interacting with the generated Prisma client, talking to, and modifying our database for us. This 'middle-man' approach allows for custom logic in each service the API delivers, as well as security, since we never expose our database directly to the API user.
+
+_Don't trust anyone, not even yourself_.
+
+## The Workflow
+
+
+
+---
