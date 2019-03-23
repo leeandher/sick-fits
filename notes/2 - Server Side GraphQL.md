@@ -183,5 +183,94 @@ So how will this application flow. It may be a bit confusing, but breaking it do
    - The _resolvers_ are have their own directory, and are specified there for each API service's operations
    - You cannot have a **resolver** if it is not first specified in the **typeDefs**, but you can do the opposite (since what you do with each request isn't predefined)
 
-To walk through this flow, we'll 
+To walk through this flow, we'll go through how you would add an item to our Schema and API.
+
+  1. Add the model to the `datamodel.prisma` file, usually at the root of your backend directory.
+  2. Now we need to send this new model to Prisma to update our database, so we run `prisma deploy` in our terminal.
+  3. We need our local prisma schema (with all our CRUD operations) to reflect the new database, so run `prisma graphql get-schema -p prisma` in the terminal
+     - This will recreate our  `src/generated/prisma.graphql` file.
+     - This step can also be skipped by adding the following post-deploy hook to your `prisma.yml` file:
+
+```yml
+ hooks:
+   post-deploy:
+      - graphql get-schema -p prisma
+```
+
+  4. Now we can modify our `schema.graphql` file (user-facing schema) to be able to read/write with our new datamodel. This would be in the form of `queries`, `mutations`, and `subscriptions`, as exemplified below:
+
+```graphql
+type Mutation {
+  createItem(
+    title: String!
+    description: String!
+    price: Int!
+    image: String
+    largeImage: String
+  ): Item!
+}
+
+type Query {
+  items: [Item!]!
+}
+```
+
+  5. We still don't have a way for our users to interact with our database yet, so we'll have to write some resolvers for this. If you haven't already, you'll first need to create your `prisma-binding` client, probably as something like `db.js`:
+     - This *DB Interface* is passed as context along with our request due to the `context: req => ({ ...req, db })` line in our `createServer.js` file (invoked to launch API server)
+
+```js
+// This file connects to the remote prisma database
+// It gives us the ability to query it with JavaScript
+
+const { Prisma } = require('prisma-binding')
+
+const db = new Prisma({
+  typeDefs: 'src/generated/prisma.graphql',
+  endpoint: process.env.PRISMA_ENDPOINT,
+  secret: process.env.PRISMA_SECRET,
+  debug: false
+})
+
+module.exports = db
+```
+
+  6. Using the example from , we can modify our `Query.js` and `Mutation.js` files, by adding our CRUD operations we steal from context!
+     - If the operation (as seen in the query example) is identical to the CRUD operation Prisma gives, we can forward the resolver using the handy export `forwardTo`.
+
+```js
+// Query.js
+const { forwardTo } = require('prisma-binding')
+
+const Query = {
+  items: forwardTo('db')
+  /*
+  
+  Since the below function operates exactly the same as on the generated schema,
+  we can just forward the request instead of rewriting pointless code.
+  This is for quick mockups, or API calls without custom logic.
+
+  async items(parent, args, ctx, info) {
+    const items = await ctx.db.query.items()
+    return items
+  }
+  */
+}
+
+module.exports = Query
+```
+```js
+// Mutation.js
+const Mutation = {
+  async createItem(parent, args, ctx, info) {
+    // 'info' passes along query, so that it can get the return data
+    const item = await ctx.db.mutation.createItem({ data: { ...args } }, info)
+    return item
+  }
+}
+
+module.exports = Mutation
+
+```
+
+  7. Open up our GraphQL playground and test it out! All the operations in our `schema.graphql` file will be visible, even without an associated resolver, but those with resolvers are going to interact with the Prisma Database just fine!
 ---
