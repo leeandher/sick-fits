@@ -16,3 +16,8 @@ _Some helpful notes for developing modern applications in React. These may be a 
   - loading
 - HOCs
   - withItems (adds the Item Query etc)
+
+renderprops with Query
+take a function with the first arguement as (payload)
+
+the Mutation component takes (mutationFunction and payload as arguments)
