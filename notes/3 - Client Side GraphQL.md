@@ -21,3 +21,7 @@ renderprops with Query
 take a function with the first arguement as (payload)
 
 the Mutation component takes (mutationFunction and payload as arguments)
+
+fieldset for disabling on submit
+
+routing can be used to redirect on submit if e.prevent default stops from refreshing.
