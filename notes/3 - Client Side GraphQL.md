@@ -7,9 +7,12 @@ _Some helpful notes for developing modern applications in React. These may be a 
 ## Setting up Apollo Client (w/ Next, and SSR)
 
 - boilerplate
+  - withData.js
+  - \_app.js
 - renderprops
   - payload
   - data
   - error
   - loading
 - HOCs
+  - withItems (adds the Item Query etc)

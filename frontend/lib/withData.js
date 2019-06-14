@@ -1,6 +1,8 @@
-import withApollo from 'next-with-apollo';
-import ApolloClient from 'apollo-boost';
-import { endpoint } from '../config';
+import withApollo from 'next-with-apollo'
+// Apollo-boost contains the Apollo Client with a lot of pre-configured best practices
+// https://www.apollographql.com/docs/react/essentials/get-started/#apollo-boost
+import ApolloClient from 'apollo-boost'
+import { endpoint } from '../config'
 
 function createClient({ headers }) {
   return new ApolloClient({
@@ -8,12 +10,13 @@ function createClient({ headers }) {
     request: operation => {
       operation.setContext({
         fetchOptions: {
-          credentials: 'include',
+          // Cookies are included in requests, so we know if the user is logged in
+          credentials: 'include'
         },
-        headers,
-      });
-    },
-  });
+        headers
+      })
+    }
+  })
 }
 
-export default withApollo(createClient);
+export default withApollo(createClient)

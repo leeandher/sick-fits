@@ -6,6 +6,7 @@ import withData from '../lib/withData'
 import Page from '../components/Page'
 
 class SickApp extends App {
+  // This static method is fired to enable crawling every page and fire off queries server-side before the first render
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {}
     if (Component.getInitialProps) {
@@ -13,12 +14,13 @@ class SickApp extends App {
     }
     // This exposes the query to the user
     pageProps.query = ctx.query
-    return pageProps
+    return { pageProps }
   }
   render() {
     const { Component, apollo, pageProps } = this.props
     return (
       <Container>
+        {/* Apollo client comes from the withData HOC */}
         <ApolloProvider client={apollo}>
           <Page>
             <Component {...pageProps} />
