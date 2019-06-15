@@ -1,3 +1,11 @@
-import Home from './index'
+import React from 'react'
 
-export default Home
+import Items from '../components/Items'
+
+const ItemsPage = props => (
+  <div>
+    <Items />
+  </div>
+)
+
+export default ItemsPage
