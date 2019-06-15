@@ -1,7 +1,8 @@
 const { forwardTo } = require('prisma-binding')
 
 const Query = {
-  items: forwardTo('db')
+  items: forwardTo('db'),
+  item: forwardTo('db')
   /*
   
   Since the below function operates exactly the same as on the generated schema,

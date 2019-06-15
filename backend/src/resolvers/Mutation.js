@@ -4,6 +4,15 @@ const Mutation = {
     // 'info' passes along query, so that it can get the return data
     const item = await ctx.db.mutation.createItem({ data: { ...args } }, info)
     return item
+  },
+
+  async updateItem(parent, { id, ...args }, ctx, info) {
+    // TODO: Check if they are logged in
+    const item = await ctx.db.mutation.updateItem(
+      { where: { id }, data: { ...args } },
+      info
+    )
+    return item
   }
 }
 
