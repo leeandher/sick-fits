@@ -189,4 +189,8 @@ It even adds helpful stuff pre-built such as loading, and error properties, allo
 
 If we wanted to abstract this, we could even setup this component as an HOC, with a loading/error state built in, renaming it to something like `withItems.js`. Then we'd just have to wrap whatever component needs the data with this guy, and it would be quenched with the props directly from the backend! The only problem with this is that you wouldn't be able to modify the query on a case by case basis, which is where GraphQL shines, reducing over-fetching of data. There's trade-offs for both systems.
 
-Cool bonus part is that apollo has its built-in cache, so if this request is fired off again, it will return the cached data first resulting in instant load times for our users.
+Cool bonus part is that Apollo has its built-in cache, so if this request is fired off again, it will return the cached data first resulting in instant load times for our users.
+
+## Nesting GraphQL Requests
+
+- ugly query nesting
