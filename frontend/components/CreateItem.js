@@ -6,6 +6,8 @@ import Router from 'next/router'
 
 import ErrorMessage from './ErrorMessage'
 
+import { imageEndpoint } from '../config'
+
 export const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
     $title: String!
@@ -28,11 +30,12 @@ export const CREATE_ITEM_MUTATION = gql`
 
 class CreateItem extends Component {
   state = {
-    title: 'Cool Shooes',
-    description: 'I love those Context',
-    image: 'dog.jpg',
-    largeImage: 'large-dog.jpg',
-    price: 1000
+    title: '',
+    description: '',
+    image: '',
+    largeImage: '',
+    price: 0,
+    uploading: false
   }
 
   handleChange = ({ target: { name, type, value } }) => {
@@ -40,15 +43,34 @@ class CreateItem extends Component {
     this.setState({ [name]: stateValue })
   }
 
+  uploadFile = async e => {
+    const [file] = e.target.files
+    const data = new FormData()
+    data.append('file', file)
+    // Select the correct cloudinary upload-preset configuration
+    data.append('upload_preset', 'sick-fits')
+    await this.setState({ uploading: true })
+    const res = await fetch(imageEndpoint, {
+      method: 'POST',
+      body: data
+    })
+    const upload = await res.json()
+    this.setState({
+      image: upload.secure_url,
+      largeImage: upload.eager[0].secure_url,
+      uploading: false
+    })
+  }
+
   render() {
-    const { description, price, title } = this.state
+    const { description, image, price, title, uploading } = this.state
     return (
       <Mutation mutation={CREATE_ITEM_MUTATION} variables={this.state}>
         {(createItem, { loading, error }) => (
           <Form
             onSubmit={async e => {
-              // Stop the form from submitting
               e.preventDefault()
+              if (uploading) return false
               // Call the mutation
               const { data } = await createItem()
               // Send them to the single item page
@@ -59,7 +81,31 @@ class CreateItem extends Component {
             }}
           >
             <ErrorMessage error={error} />
-            <fieldset disabled={loading} aria-busy={loading}>
+            <fieldset
+              disabled={loading || uploading}
+              aria-busy={loading || uploading}
+            >
+              <label htmlFor="file">
+                Image
+                <input
+                  type="file"
+                  id="file"
+                  name="file"
+                  onChange={this.uploadFile}
+                  required
+                />
+                {image.length > 0 && (
+                  <img
+                    src={image}
+                    alt="Upload Preview"
+                    style={{
+                      maxWidth: '300px',
+                      maxHeight: '200px',
+                      padding: '1rem'
+                    }}
+                  />
+                )}
+              </label>
               <label htmlFor="title">
                 Title
                 <input
@@ -93,6 +139,7 @@ class CreateItem extends Component {
                   placeholder="Enter a Description"
                   value={description}
                   onChange={this.handleChange}
+                  style={{ boxShadow: 'none' }}
                   required
                 />
               </label>
