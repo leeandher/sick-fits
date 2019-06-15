@@ -30,10 +30,10 @@ const Form = styled.form`
   select {
     width: 100%;
     padding: 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.35rem;
     border: 1px solid black;
-    font-family: inherit;
-    font-weight: thin;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
+      sans-serif;
     &:focus {
       outline: 0;
       border-color: ${props => props.theme.red};
