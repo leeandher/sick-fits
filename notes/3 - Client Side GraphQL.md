@@ -54,6 +54,8 @@ In this function, we are extracting the headers from the front-end, and setting 
 Now that we've set up our client as an HOC, we need to setup the provider to allow our application to access the client. We do that using the next file: `_app.js`. We'll be wrapping our application with this HOC to provide the actual Client as a prop to our provider. Check out the following code:
 
 ```js
+// _app.js
+
 import App, { Container } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 
@@ -94,28 +96,97 @@ It may be a lot to parse but we'll break it down. First of all the `ApolloProvid
 
 Now to setup the actual server-side rendering, we need to supply the returned data as props for our first load of the page components. We do that using the static `getInitialProps` method. It accepts the Component being rendered, and the context we assign. Inside here, we run the method `getInitialProps` on the component being rendered, essentially fetching its query before the first load, and returning it as props to the page.
 
-What we've done now is have the browser fetch the page resources before loading the page, so that data is sent from the server directly to the user. Whatever the queries that we write in the component files will be prefetched and added to props to be used in the component.
+What we've done now is have the browser fetch the page resources before loading the page, so that data is sent from the server directly to the user. Whatever the queries that we write in the component files will be pre-fetched and added to props to be used in the component.
+
+## What is Render-props?
+
+There is a design system used in React components for passing data into a component without having to take it apart, often referred to as **render-props**. What this means is that the JSX component doesn't actually take any children inside of it, but instead accepts a function which itself _will return JSX_. Take a look at the following:
 
 ```js
-// _app.js
+// With Render-props
+class Name extends React.Component {
+  state = {
+    name: "sALly",
+  }
+  textify = (name) => `${name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}!`
+  render() {
+    const {name} = this.state
+    const {show} = this.props
+    return (
+      <div className="name-style">
+        {show(textify(name))}
+      </div>
+    )
+  }
+}
+
+const Parent = () => (
+  <div>
+    <h1>Hello<h1>
+    <Name show={(nameText) => <h2>{nameText}</h2>}
+  </div>
+)
 ```
 
-- boilerplate
-  - withData.js
-  - \_app.js
-- renderprops
-  - payload
-  - data
-  - error
-  - loading
-- HOCs
-  - withItems (adds the Item Query etc)
+In this example, we can offload all the formatting logic for the `<Name />` component into its own file, cleaning up our parent, and not having to address it in our state. It may look needless here, but with many other contributors to state, an application can get confusing quickly, so render-props is a useful system to understand.
 
-renderprops with Query
-take a function with the first arguement as (payload)
+Usually this is used by external libraries which will perform operations in the background and provide some useful parameters to your render-prop function in order to display it. In our case, `react-apollo`'s `<Query />` and `<Mutation />` components both do this, working together with the `ApolloProvider` HOC to submit queries you pass as props, and return the payload of data to your application via render-props. Keep reading to see what that might look like.
 
-the Mutation component takes (mutationFunction and payload as arguments)
+## React Meets GraphQL
 
-fieldset for disabling on submit
+In order to send/receive data from the backend with our newly set up client, all we have to do is import the type of request we'd like to make from `react-apollo` and _graphql-ify_ it. For the second step, we'll use another package called `graphql-tag` which will allow us to write our queries in template literals.
 
-routing can be used to redirect on submit if e.prevent default stops from refreshing.
+When using a query inside a React component, we conventionally write it at the top of the file, in all caps as follows:
+
+```js
+import gql from 'graphql-tag'
+
+export const ALL_ITEMS_QUERY = gql`
+  query ALL_ITEMS_QUERY {
+    items {
+      id
+      title
+      price
+      description
+      image
+      largeImage
+    }
+  }
+`
+```
+
+The export statement will be used for testing later on, but the query itself is now accessible to the component we'll be writing later in the file.
+
+Inside that component we use `react-apollo`'s own HOC components:
+
+```js
+export default class Items extends Component {
+  render() {
+    return (
+      <Center>
+        <Query query={ALL_ITEMS_QUERY}>
+          {({ data, error, loading }) => {
+            if (loading) return <p>⚡ Loading... ⚡</p>
+            if (error) return <p>❌ Error ❌: {error.message}</p>
+            return (
+              <ItemsList>
+                {data.items.map(item => (
+                  <Item key={item.id} item={item} />
+                ))}
+              </ItemsList>
+            )
+          }}
+        </Query>
+      </Center>
+    )
+  }
+}
+```
+
+This is a pretty basic implementation but theres still some stuff to parse here. The `<Query>` class takes in the query we specified above, and follows render-props in order for us to render our code. Its render-prop function accepts the payload containing the response from our backend, and we can manipulate what we see depending on the response.
+
+It even adds helpful stuff pre-built such as loading, and error properties, allowing us to setup Error States as seen above. Once the request succeeds, our application will render the items as in the `<ItemsList>` component, without us having to save each one into state.
+
+If we wanted to abstract this, we could even setup this component as an HOC, with a loading/error state built in, renaming it to something like `withItems.js`. Then we'd just have to wrap whatever component needs the data with this guy, and it would be quenched with the props directly from the backend! The only problem with this is that you wouldn't be able to modify the query on a case by case basis, which is where GraphQL shines, reducing over-fetching of data. There's trade-offs for both systems.
+
+Cool bonus part is that apollo has its built-in cache, so if this request is fired off again, it will return the cached data first resulting in instant load times for our users.
