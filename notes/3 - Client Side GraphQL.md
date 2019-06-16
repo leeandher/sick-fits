@@ -194,3 +194,5 @@ Cool bonus part is that Apollo has its built-in cache, so if this request is fir
 ## Nesting GraphQL Requests
 
 - ugly query nesting
+- updators functions on mutations
+- reading and writing from the cache

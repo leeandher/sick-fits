@@ -263,7 +263,10 @@ module.exports = Query
 const Mutation = {
   async createItem(parent, args, ctx, info) {
     // 'info' passes along query, so that it can get the return data
+    // It tells the backend which fields were requested from the front-end
+    // If we were to replace it with `{id title description}`, only those fields would be returned
     const item = await ctx.db.mutation.createItem({ data: { ...args } }, info)
+
     return item
   }
 }
