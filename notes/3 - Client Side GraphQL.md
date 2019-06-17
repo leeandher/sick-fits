@@ -191,9 +191,44 @@ If we wanted to abstract this, we could even setup this component as an HOC, wit
 
 Cool bonus part is that Apollo has its built-in cache, so if this request is fired off again, it will return the cached data first resulting in instant load times for our users.
 
-## Nesting GraphQL Requests
+## Interacting with the Apollo Cache
 
-- ugly query nesting
-- updators functions on mutations
-- side-effects in next.js
-- reading and writing from the cache
+For some situations, when you perform a request, the response will need to update a cached result for UI purposes. In this application, you can easily see this coming into play when you query a list of items, then delete one of them. Since the deletion mutation modifies what is returned from that initial query, you'll need to do one of two things to show visibly to the user that the method worked.
+
+1. Re-fetch the query
+2. Update the cache
+
+While re-fetching the query works, it comes with a network delay since you have to wait for the response before anything can be seen meaning the deletion mutation, and list query must both fire and complete. To give the essence of a faster UI, updating the cache can be done instead.
+
+To do so, use the `update` prop on the `<Mutation>` component to supply a function which will run after the mutation has been performed:
+
+```js
+class DeleteItem extends Component {
+  update = () {
+    // Manually update the client cache so it matches the server
+    // 1. Read the query data from the cache
+    const cacheData = cache.readQuery({ query: ALL_ITEMS_QUERY })
+    // 2. Manually change the cached data
+    cacheData.items = cacheData.items.filter(
+      ({ id }) => id !== resData.deleteItem.id
+    )
+    // 3. Write the changed cache data to its query
+    cache.writeQuery({ query: ALL_ITEMS_QUERY, data: cacheData })
+  }
+   render() {
+    const { id } = this.props
+    return (
+      <Mutation
+        mutation={DELETE_ITEM_MUTATION}
+        variables={{ id }}
+        update={this.update}
+      >
+      ...
+      </Mutation>
+```
+
+In Apollo, the cache is written to for every individual request we make on the front-end. If we'd like to modify what we are returned from that request, we have to use `readQuery` to get the data from that specific query, then `writeQuery` a new data object containing only the information we want in the UI. It may seem like a lot, but it shows a much cleaner UI and actually helps keep the user's cache inline with the database if the request was fulfilled properly.
+
+<!-- ## Nesting GraphQL Requests
+
+- ugly query nesting -->
