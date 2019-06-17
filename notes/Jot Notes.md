@@ -54,3 +54,32 @@ uploadFile = async e => {
 The `imageEndpoint` depends on the provider you use, but for the most part, appending data to the body the request, and using the built in `fetch`, and `FormData` APIs, is the way to go.
 
 ---
+
+## Side Effects in Next.js
+
+Occasionally you might need to perform what are commonly referred to as **side-effects** when handling certain situations in your application. _Side effects_ are scenarios in which you are writing code that will reach out of its conventional scope to modify another part of the application, and generally, these guys are frowned upon by developers. Thing is, there are some snazzy advantages to these guys that can result in a better user experience, things like:
+
+- Live updating favicons
+- Modifying font imports
+- Changing the page title
+
+A lot of these can be modified by changing what's contained in the `<head>` tag of your HTML page. Cool thing tho, since next is built, rather than parsed, it can allow you to use the `<Head>` tag imported from `next/head` anywhere in the application, and once built it will be surfaced into the actual head! That means you can overwrite certain parts of the head at lower levels in your application really easily:
+
+```js
+// ...
+import Head from 'next/head'
+
+const SingleItem = ({ item }) => (
+  <ItemStyles>
+    <Head>
+      <title> My App | {item.title}</title>
+    </Head>
+    <img src={item.largeImage} alt={item.title} />
+    <div className="details">
+      <h2>{item.title}</h2>
+      <p> {item.description}</p>
+    </div>
+  </ItemStyles>
+)
+// ...
+```
