@@ -277,3 +277,5 @@ module.exports = Mutation
 
   7. Open up our GraphQL playground and test it out! All the operations in our `schema.graphql` file will be visible, even without an associated resolver, but those with resolvers are going to interact with the Prisma Database just fine!
 ---
+
+## Connections
