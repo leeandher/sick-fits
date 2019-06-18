@@ -2,9 +2,9 @@ import React from 'react'
 
 import Items from '../components/Items'
 
-const ItemsPage = props => (
+const ItemsPage = ({ query }) => (
   <div>
-    <Items />
+    <Items page={parseFloat(query.page) || 1} />
   </div>
 )
 

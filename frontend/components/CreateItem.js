@@ -6,7 +6,7 @@ import Router from 'next/router'
 
 import ErrorMessage from './ErrorMessage'
 
-import { imageEndpoint } from '../config'
+import { IMAGE_ENDPOINT } from '../config'
 
 export const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
@@ -50,7 +50,7 @@ class CreateItem extends Component {
     // Select the correct cloudinary upload-preset configuration
     data.append('upload_preset', 'sick-fits')
     await this.setState({ uploading: true })
-    const res = await fetch(imageEndpoint, {
+    const res = await fetch(IMAGE_ENDPOINT, {
       method: 'POST',
       body: data
     })
