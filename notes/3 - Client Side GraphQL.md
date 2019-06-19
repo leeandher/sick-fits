@@ -241,11 +241,15 @@ const Pagination = ({ currentPage }) => (
       const totalPages = Math.ceil(count / itemsPerPage)
       return (
         <div>
-          <Link to={`items/?page=${currentPage - 1}`}>Prev</Link>
+          <Link prefetch to={`items/?page=${currentPage - 1}`}>
+            Prev
+          </Link>
           <p>
             Page {currentPage} of {totalPages}
           </p>
-          <Link to={`items/?page=${currentPage + 1}`}>Next</Link>
+          <Link prefetch to={`items/?page=${currentPage + 1}`}>
+            Next
+          </Link>
         </div>
       )
     }}
@@ -253,6 +257,7 @@ const Pagination = ({ currentPage }) => (
 )
 ```
 
+The `prefetch` attribute on the `next/link` components gets the next page's data behind the scenes before the user clicks the button.
 The `PAGINATION_QUERY` would look something like this:
 
 ```graphql

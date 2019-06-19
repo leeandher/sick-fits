@@ -279,3 +279,5 @@ module.exports = Mutation
 ---
 
 ## Connections
+
+Connections are a sort of meta-information query that can be accessed on items in your database. It's provided as part of Prismas operations but is used for getting data like the *total number of items*, or *graphing the edges/nodes of an item*, or *page information* if implementing pagination.
