@@ -230,3 +230,41 @@ class DeleteItem extends Component {
 In Apollo, the cache is written to for every individual request we make on the front-end. If we'd like to modify what we are returned from that request, we have to use `readQuery` to get the data from that specific query, then `writeQuery` a new data object containing only the information we want in the UI. It may seem like a lot, but it shows a much cleaner UI and actually helps keep the user's cache inline with the database if the request was fulfilled properly.
 
 ## Pagination and Cache Invalidation
+
+To setup client-side pagination, the simplest method is by attaching an `aggregate` query onto a `Pagination` type React component. By that I mean offloading the page selection (Prev, Current Page, Next buttons, etc.) to a separate React component which will be checking for the total number of items it paginates through. Mocking this up, it would look something like this:
+
+```js
+const Pagination = ({ currentPage }) => (
+  <Query query={PAGINATION_QUERY}>
+    {({ data }) => {
+      const { count } = data.itemsConnection.aggregate
+      const totalPages = Math.ceil(count / itemsPerPage)
+      return (
+        <div>
+          <Link to={`items/?page=${currentPage - 1}`}>Prev</Link>
+          <p>
+            Page {currentPage} of {totalPages}
+          </p>
+          <Link to={`items/?page=${currentPage + 1}`}>Next</Link>
+        </div>
+      )
+    }}
+  </Query>
+)
+```
+
+The `PAGINATION_QUERY` would look something like this:
+
+```graphql
+query PAGINATION_QUERY {
+  itemsConnection {
+    aggregate {
+      count
+    }
+  }
+}
+```
+
+This just gets the total number of items that you will be paginating over. The more complex part is using this information, only displaying the items within that page region. This can be done by the following:
+
+<!-- Setting up per page render limits -->
