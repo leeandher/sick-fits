@@ -272,9 +272,91 @@ query PAGINATION_QUERY {
 
 This just gets the total number of items that you will be paginating over. The more complex part is using this information, only displaying the items within that page region. This can be done by the following:
 
-<!-- Setting up per page render limits -->
+```js
+const ALL_ITEMS_QUERY = gql`
+  query ALL_ITEMS_QUERY(
+    $skip: Int = 0,
+    $first: Int = ${PER_PAGE}
+  ) {
+    items(first: $first, skip: $skip) {
+      id
+      title
+      price
+    }
+  }
+`
+
+// ...
+<Query
+  query={ALL_ITEMS_QUERY}
+  variables={{
+    skip: (page - 1) * PER_PAGE,
+    first: PER_PAGE
+  }}
+>
+  {() => {
+    // rest of component
+  }}
+</Query>
+```
+
+This must be setup in the backend before, but allows us to skip some pages and display only certain amounts from the entire data-set. Using a bit of simple math, we can get our pages set up.
+You can also see that you can set default values for your queries to fall-back on, in case you find yourself writing a lot a repeat code.
 
 ## Cache Invalidation
 
-<!-- fetchPolicy: "network-only" -->
-<!-- refetchQueries: doesnt work for multiple pages with parameters -->
+Cache Invalidation is the term used to refer to the ability to remove parts of the cache so that our applications's data stays accurate. Say for example, after you've implemented pagination, you want to add an item to the set (e.g. _CREATE_ITEM_ mutation). When you've done so, every query that fires off a request for those items must be updated (e.g. _ALL_ITEMS_ query), and its important to understand that **each paginated page has their own query, since the parameters are different**. Now that we've added a new item to page 1, every other page will have to modify it's cached response as well. There are a few ways to counter this:
+
+1. Fetch Policy
+
+The fetch policy allows you to specify where Apollo should reach when resolving data from the graphql request. By default, it checks the cache for an older copy of the response data and uses that. If none is found, it fires over the network to the endpoint and resolves the fresh data.
+
+Since we want it to first back to the network, we can add the `fetchPolicy="network-only"` to the query in question:
+
+```js
+<Query
+  query={ALL_ITEMS_QUERY}
+  variables={{
+    skip: (page - 1) * PER_PAGE,
+    first: PER_PAGE
+  }}
+  fetchPolicy="network-only"
+>
+  {() => {
+    // rest of component
+  }}
+</Query>
+```
+
+Now the request will always fire to the network, but unfortunately, this means our cache is useless for this query now, and there will be a delay for every time we use this query.
+
+2. Refetch Queries
+
+Another method is too attach a special parameter to the mutation in question instead, specifying which queries should be refetched to update the cache. It takes in an array of these such requests as follows:
+
+```js
+import { ALL_ITEMS_QUERY } from './OtherComponent'
+
+render() {
+  return (
+   <Mutation
+     mutation={CREATE_ITEM_MUTATION}
+     variables={this.state}
+     refetchQueries={[
+       {
+         query: ALL_ITEMS_QUERY,
+         variables: { id: this.props.id }
+       }
+     ]}
+   >
+     {() => {
+       // rest of component
+     }}
+   </Mutation>
+  )
+}
+```
+
+This works great for smaller queries or applications, but unfortunately, if the query uses parameters, they must be specified in this declaration. You can programmatically declare all of them, sure, but then if you have hundreds of pages, that's hundreds of pages that the client has to resolve all at once.
+
+Unfortunately, there's no better way to handle cache invalidation in this scenario, since it's currently being worked on by the Apollo team. Oh, and I didn't even mention manually writing to and rewriting the cache as done above because that's not a recommmended solution to anyone encountering this problem.
