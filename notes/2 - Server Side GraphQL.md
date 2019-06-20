@@ -186,6 +186,27 @@ So how will this application flow. It may be a bit confusing, but breaking it do
 To walk through this flow, we'll go through how you would add an item to our Schema and API.
 
   1. Add the model to the `datamodel.prisma` file, usually at the root of your backend directory.
+
+   - The `datamodel.prisma` file outlines the types that we're passing to prisma to generate CRUD operations for. There are a few new unique identifiers we need to add for prisma to make some helpful extra fields, as seen in the comments of this mockup:
+
+```grapqhl
+type User {
+  id: ID! @id
+  name: String!
+  email: String!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Item {
+  id: ID! @id
+  title: String!
+  price: Int!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+```
+
   2. Now we need to send this new model to Prisma to update our database, so we run `prisma deploy` in our terminal.
   3. We need our local prisma schema (with all our CRUD operations) to reflect the new database, so run `prisma graphql get-schema -p prisma` in the terminal
      - This will recreate our  `src/generated/prisma.graphql` file.
@@ -198,7 +219,7 @@ To walk through this flow, we'll go through how you would add an item to our Sch
 ```
 
   4. Now we can modify our `schema.graphql` file (user-facing schema) to be able to read/write with our new datamodel. This would be in the form of `queries`, `mutations`, and `subscriptions`, as exemplified below:
-
+  
 ```graphql
 type Mutation {
   createItem(
@@ -215,7 +236,7 @@ type Query {
 }
 ```
 
-  5. We still don't have a way for our users to interact with our database yet, so we'll have to write some resolvers for this. If you haven't already, you'll first need to create your `prisma-binding` client, probably as something like `db.js`:
+  1. We still don't have a way for our users to interact with our database yet, so we'll have to write some resolvers for this. If you haven't already, you'll first need to create your `prisma-binding` client, probably as something like `db.js`:
      - This *DB Interface* is passed as context along with our request due to the `context: req => ({ ...req, db })` line in our `createServer.js` file (invoked to launch API server)
 
 ```js
@@ -284,5 +305,23 @@ Connections are a sort of meta-information query that can be accessed on items i
 
 ## Pagination
 
-- fields in schema
-- prisma specific new things @id @createdAt @updatedAt
+There are a few common fields that are added to the application's schema when implementing pagination. Since not all your data is being shown to the user, pagination is often tied to the ability to search through that information client-side (search bar, filters, sorting etc.), but if not, a few of these parameters are optional:
+
+```graphql
+type Query {
+  items(
+    where: ItemWhereInput # optional - for search
+    orderBy: ItemOrderByInput # optional - for sorting
+    skip: Int 
+    first: Int
+  ): [Item!]!
+}
+```
+The `where` param will allow you to pass search parameters to find specific items, and the `orderBy` implements a basic sort on the fields attributed to the Item-type.
+
+The `skip` and `first` are the actual pagination parameters. `skip` tells the API how many 'Items' are to be ignored when requesting them all, and `first` tells you how many are to be returned.
+
+Think of it like: 
+> The first X after skipping Y
+
+With this, we can implement a query client side that will pass the number per page as `first` and the page-number - 1 multiplied by the number per page for `skip`, limiting the returned items.
