@@ -273,3 +273,8 @@ query PAGINATION_QUERY {
 This just gets the total number of items that you will be paginating over. The more complex part is using this information, only displaying the items within that page region. This can be done by the following:
 
 <!-- Setting up per page render limits -->
+
+## Cache Invalidation
+
+<!-- fetchPolicy: "network-only" -->
+<!-- refetchQueries: doesnt work for multiple pages with parameters -->
