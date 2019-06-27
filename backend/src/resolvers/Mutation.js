@@ -19,6 +19,10 @@ const Mutation = {
     // TODO: Check for user permissions on this item
     return ctx.db.mutation.deleteItem({ where }, info)
   }
+
+  async signUp(parent, args, ctx, info) {
+    return
+  }
 }
 
 module.exports = Mutation
