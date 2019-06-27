@@ -25,7 +25,6 @@ const Mutation = {
 
   async signUp(parent, args, ctx, info) {
     const email = args.email.toLowerCase();
-    console.log(email);
     const password = await bcrypt.hash(args.password, 10);
     const user = await ctx.db.mutation.createUser(
       {
@@ -45,7 +44,7 @@ const Mutation = {
     // Set the JWT on the response as a cookie
     ctx.response.cookie("token", token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365
+      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     });
     return user;
   }
