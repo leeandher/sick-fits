@@ -53,7 +53,9 @@ async signUp(parent, args, ctx, info) {
 The permissions field above is formatted oddly simply because it is an `enum` in GraphQL, you can see more about how these work in the other note: *2 - Server Side GraphQL*.
 
 ## Sign In
+- mutation vs query because data is changing/being set.
 
 
 ## Sign Out
+ - messages type, etc
 
