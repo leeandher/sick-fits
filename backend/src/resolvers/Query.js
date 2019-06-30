@@ -1,9 +1,6 @@
-const { forwardTo } = require('prisma-binding')
+const { forwardTo } = require("prisma-binding")
 
 const Query = {
-  items: forwardTo('db'),
-  item: forwardTo('db'),
-  itemsConnection: forwardTo('db')
   /*
   
   Since the below function operates exactly the same as on the generated schema,
@@ -15,6 +12,14 @@ const Query = {
     return items
   }
   */
+  items: forwardTo("db"),
+  item: forwardTo("db"),
+  itemsConnection: forwardTo("db"),
+  me(parent, args, ctx, info) {
+    if (!ctx.request.userId) return null
+    const where = { id: ctx.request.userId }
+    return ctx.db.query.user({ where }, info)
+  }
 }
 
 module.exports = Query
