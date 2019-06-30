@@ -1,5 +1,5 @@
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const Mutation = {
   async createItem(parent, args, ctx, info) {
@@ -33,7 +33,7 @@ const Mutation = {
           email,
           password,
           permissions: {
-            set: ["USER"]
+            set: ['USER']
           }
         }
       },
@@ -42,7 +42,7 @@ const Mutation = {
     // Create the JWT for this specific uses
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
     // Set the JWT on the response as a cookie
-    ctx.response.cookie("sf-token", token, {
+    ctx.response.cookie('sf-token', token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     })
@@ -60,13 +60,22 @@ const Mutation = {
       throw new Error(`❌ Invalid password, try again! ❌`)
     }
 
+    // Create the JWT for this specific uses
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
     // Set the JWT on the response as a cookie
-    ctx.response.cookie("sf-token", token, {
+    ctx.response.cookie('sf-token', token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     })
     return ctx.db.query.user({ where: { email } }, info)
+  },
+
+  async signOut(parent, args, ctx, info) {
+    ctx.response.clearCookie('sf-token', {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+    })
+    return { message: 'See ya!' }
   }
 }
 

@@ -1,11 +1,12 @@
-import gql from "graphql-tag"
-import React, { Component } from "react"
-import { Mutation } from "react-apollo"
+import React, { Component } from 'react'
+import gql from 'graphql-tag'
+import { Mutation } from 'react-apollo'
+import Router from 'next/router'
 
-import ErrorMessage from "./ErrorMessage"
-import Form from "./styles/Form"
+import ErrorMessage from './ErrorMessage'
+import Form from './styles/Form'
 
-import { CURRENT_USER_QUERY } from "./User"
+import { CURRENT_USER_QUERY } from './User'
 
 const SIGN_IN_MUTATION = gql`
   mutation SIGN_IN_MUTATION($email: String!, $password: String!) {
@@ -17,11 +18,11 @@ const SIGN_IN_MUTATION = gql`
   }
 `
 
-export default class SignIn extends Component {
+class SignIn extends Component {
   state = {
-    email: "",
-    name: "",
-    password: ""
+    email: '',
+    name: '',
+    password: ''
   }
   saveToState = e => {
     const { value, name } = e.target
@@ -47,10 +48,11 @@ export default class SignIn extends Component {
                 e.preventDefault()
                 await signIn()
                 this.setState({
-                  email: "",
-                  name: "",
-                  password: ""
+                  email: '',
+                  name: '',
+                  password: ''
                 })
+                Router.push('/')
               }}
             >
               <fieldset disabled={loading} aria-busy={loading}>
@@ -85,3 +87,6 @@ export default class SignIn extends Component {
     )
   }
 }
+
+export default SignIn
+export { SIGN_IN_MUTATION }

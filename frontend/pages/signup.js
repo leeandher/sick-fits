@@ -1,5 +1,5 @@
-import React from "react"
-import styled from "styled-components"
+import React from 'react'
+import styled from 'styled-components'
 
 const Columns = styled.div`
   display: grid;
@@ -7,8 +7,8 @@ const Columns = styled.div`
   grid-gap: 20px;
 `
 
-import SignUp from "../components/SignUp"
-import SignIn from "../components/SignIn"
+import SignUp from '../components/SignUp'
+import SignIn from '../components/SignIn'
 
 const SignUpPage = props => (
   <Columns>
