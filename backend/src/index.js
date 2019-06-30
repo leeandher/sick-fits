@@ -14,7 +14,7 @@ server.express.use(cookieParser())
 
 // Decode the JWT so that we can get the User ID on each request
 server.express.use((req, res, next) => {
-  const { token } = req.cookies
+  const token = req.cookies["sf-token"]
   if (token) {
     const { userId } = jwt.verify(token, process.env.APP_SECRET)
     req.userId = userId

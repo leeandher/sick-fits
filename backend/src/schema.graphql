@@ -18,6 +18,7 @@ type Mutation {
   ): Item!
   deleteItem(id: ID!): Item!
   signUp(email: String!, password: String!, name: String!): User!
+  signIn(email: String!, password: String!): User!
 }
 
 type Query {

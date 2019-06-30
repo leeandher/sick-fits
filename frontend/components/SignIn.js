@@ -4,23 +4,20 @@ import { Mutation } from "react-apollo"
 
 import ErrorMessage from "./ErrorMessage"
 import Form from "./styles/Form"
+
 import { CURRENT_USER_QUERY } from "./User"
 
-const SIGN_UP_MUTATION = gql`
-  mutation SIGN_UP_MUTATION(
-    $email: String!
-    $name: String!
-    $password: String!
-  ) {
-    signUp(email: $email, name: $name, password: $password) {
+const SIGN_IN_MUTATION = gql`
+  mutation SIGN_IN_MUTATION($email: String!, $password: String!) {
+    signIn(email: $email, password: $password) {
       id
-      email
       name
+      email
     }
   }
 `
 
-export default class SignUp extends Component {
+export default class SignIn extends Component {
   state = {
     email: "",
     name: "",
@@ -34,17 +31,21 @@ export default class SignUp extends Component {
     const { email, name, password } = this.state
     return (
       <Mutation
-        mutation={SIGN_UP_MUTATION}
+        mutation={SIGN_IN_MUTATION}
         variables={this.state}
-        refetchQueries={[{ query: CURRENT_USER_QUERY }]}
+        refetchQueries={[
+          {
+            query: CURRENT_USER_QUERY
+          }
+        ]}
       >
-        {(signUp, { error, loading }) => {
+        {(signIn, { error, loading }) => {
           return (
             <Form
               method="post"
               onSubmit={async e => {
                 e.preventDefault()
-                await signUp()
+                await signIn()
                 this.setState({
                   email: "",
                   name: "",
@@ -53,7 +54,7 @@ export default class SignUp extends Component {
               }}
             >
               <fieldset disabled={loading} aria-busy={loading}>
-                <h2>Sign Up for an Account</h2>
+                <h2>Already have an account?</h2>
                 <ErrorMessage error={error} />
                 <label htmlFor="email">
                   Email
@@ -62,16 +63,6 @@ export default class SignUp extends Component {
                     name="email"
                     placeholder="e.g. kanye@west.com"
                     value={email}
-                    onChange={this.saveToState}
-                  />
-                </label>
-                <label htmlFor="name">
-                  Name
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="e.g. Kanye West"
-                    value={name}
                     onChange={this.saveToState}
                   />
                 </label>
@@ -85,7 +76,7 @@ export default class SignUp extends Component {
                     onChange={this.saveToState}
                   />
                 </label>
-                <button type="submit">Sign Up!</button>
+                <button type="submit">Sign In!</button>
               </fieldset>
             </Form>
           )
