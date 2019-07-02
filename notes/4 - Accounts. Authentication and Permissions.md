@@ -82,9 +82,36 @@ async signIn(parent, args, ctx, info) {
   })
   return ctx.db.query.user({ where: { email } }, info)
 },
+```
+The cookie generation is done exactly like the sign up system, since the user is *signed in* after *signing up*. 
 
+**Sign Out**
+
+Here is actually a good place to explain how custom types can be passed as a response. In some cases such as this, you'll want to just send a message back from the API rather than information about the user who just signed out, since it wouldn't be useful to the app.
+
+In that case you just add it to the `schema.graphql` file as another type:
+
+```graphql
+type SuccessMessage {
+  message: String
+}
+
+type Mutation {
+  signOut: SuccessMessage
+}
 ```
 
+Now your resolver has to return the data with the matching shape:
 
- - messages type, etc
+```js
+async signOut(parent, args, ctx, info) {
+ ctx.response.clearCookie('sf-token', {
+   httpOnly: true,
+   maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+ })
+ return { message: 'See ya!' }
+}
+
+```
+Another important note is that the `clearCookie` method attached to the response is actually requires the same parameters as initially provided to it in order to ensure the browser complies ([Check out the Docs](http://expressjs.com/en/api.html#res.clearCookie))
 
