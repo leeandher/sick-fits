@@ -52,10 +52,39 @@ async signUp(parent, args, ctx, info) {
 
 The permissions field above is formatted oddly simply because it is an `enum` in GraphQL, you can see more about how these work in the other note: *2 - Server Side GraphQL*.
 
-## Sign In
-- mutation vs query because data is changing/being set.
+## Sign In/Out
+
+The sign up is probably the most complicated mutation to write. To sign in, or sign out really doesn't require any writes to the data store, just some manipulation of the cookies. If a user signs in, we should check their password and username against our database, and assign them the proper credentials via JWT, and if they sign out, simply revoke the JwT their browser has assigned!
+
+First things first, we are going to define these mechanisms as `mutations` instead of `queries`. The reason for this, is that something in our application is actually changing when we perform this request, even if it isn't related to the database. On the client-side, the UI and permissions are *mutating*, thus `mutation`.
+
+**Sign In**
+
+```js
+async signIn(parent, args, ctx, info) {
+  // 1. Validate the incoming data
+  const email = args.email.toLowerCase()
+  const user = await ctx.db.query.user({ where: { email } }, `{id password}`)
+  if (!user) {
+    throw new Error(`😫 No user found with that email (${email})! 😫`)
+  }
+  const valid = await bcrypt.compare(args.password, user.password)
+  if (!valid) {
+    throw new Error(`❌ Invalid password, try again! ❌`)
+  }
+
+  // Create the JWT for this specific uses
+  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
+  // Set the JWT on the response as a cookie
+  ctx.response.cookie('sf-token', token, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+  })
+  return ctx.db.query.user({ where: { email } }, info)
+},
+
+```
 
 
-## Sign Out
  - messages type, etc
 
