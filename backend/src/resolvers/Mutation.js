@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { randomBytes } = require('crypto')
+const { promisify } = require('util')
 
 const Mutation = {
   async createItem(parent, args, ctx, info) {
@@ -76,6 +78,27 @@ const Mutation = {
       maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     })
     return { message: 'See ya!' }
+  },
+
+  async requestReset(parent, { email }, ctx, info) {
+    // 1. Check if this is a real user
+    const user = await ctx.db.query.user({ where: { email } })
+    if (!user) {
+      throw new Error(`😫 No user found with that email (${email})! 😫`)
+    }
+    // 2. Set a reset token and expiry on that user
+    const resetToken = (await promisify(randomBytes)(20)).toString('hex')
+    const resetTokenExpiry = Date.now() + 1000 * 60 * 60 // 1h from now
+    const res = await ctx.db.mutation.updateUser({
+      where: { email },
+      data: {
+        resetToken,
+        resetTokenExpiry
+      }
+    })
+    console.log(res)
+    return { message: resetToken }
+    // 3. Email them the reset token
   }
 }
 
