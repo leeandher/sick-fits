@@ -6,7 +6,7 @@ _Some helpful notes for developing modern applications in React. These may be a 
 
 ## Authentication Flow
 
-The way the authentication of the Server-side Rendered application is going to go is entirely through the help of **JSON Web Tokens (JWTs)** in *cookies*. JWTs are useful little identifiers that we can attach to our requests to and from the server so that we know what permissions the user has associated with them and what mutations/queries are valid for our GraphQL server to do.
+The way the authentication of the Server-side Rendered application is going to go is entirely through the help of **JSON Web Tokens (JWTs)** in _cookies_. JWTs are useful little identifiers that we can attach to our requests to and from the server so that we know what permissions the user has associated with them and what mutations/queries are valid for our GraphQL server to do.
 
 They are ideally sent with every request, an a common way to do so is by setting them in the user's Local Storage of their web browser. The problem with this is that if our application is SSR'd, the initial request isn't sent with the JWT so we will actually send them an SSR'd view of the non-authenticated view, which will flicker in 1-2s to the authenticated view once our browser receives a request for its Locally Stored content.
 
@@ -15,13 +15,15 @@ By attaching the JWTs to our cookies, they will be sent to the server with every
 ## Sign Up
 
 When a user signs up, there are a few things that need to be done in order to preserve this authentication flow. They are easy to forget and can be a hassle down the line if you have more and more users accessing your applications:
-  1. Lowercase the email
-  2. Hash the password
-  3. Create the User in the database (with the new password/email values)
-  4. Create a JWT for the user (preferably with their ID)
-  5. Set the JWT on the response as a cookie
+
+1. Lowercase the email
+2. Hash the password
+3. Create the User in the database (with the new password/email values)
+4. Create a JWT for the user (preferably with their ID)
+5. Set the JWT on the response as a cookie
 
 The following code snippet is an example of how to implement the sign-up resolver:
+
 ```js
 async signUp(parent, args, ctx, info) {
   const email = args.email.toLowerCase();
@@ -50,13 +52,13 @@ async signUp(parent, args, ctx, info) {
 }
 ```
 
-The permissions field above is formatted oddly simply because it is an `enum` in GraphQL, you can see more about how these work in the other note: *2 - Server Side GraphQL*.
+The permissions field above is formatted oddly simply because it is an `enum` in GraphQL, you can see more about how these work in the other note: _2 - Server Side GraphQL_.
 
 ## Sign In/Out
 
 The sign up is probably the most complicated mutation to write. To sign in, or sign out really doesn't require any writes to the data store, just some manipulation of the cookies. If a user signs in, we should check their password and username against our database, and assign them the proper credentials via JWT, and if they sign out, simply revoke the JwT their browser has assigned!
 
-First things first, we are going to define these mechanisms as `mutations` instead of `queries`. The reason for this, is that something in our application is actually changing when we perform this request, even if it isn't related to the database. On the client-side, the UI and permissions are *mutating*, thus `mutation`.
+First things first, we are going to define these mechanisms as `mutations` instead of `queries`. The reason for this, is that something in our application is actually changing when we perform this request, even if it isn't related to the database. On the client-side, the UI and permissions are _mutating_, thus `mutation`.
 
 **Sign In**
 
@@ -83,7 +85,8 @@ async signIn(parent, args, ctx, info) {
   return ctx.db.query.user({ where: { email } }, info)
 },
 ```
-The cookie generation is done exactly like the sign up system, since the user is *signed in* after *signing up*. 
+
+The cookie generation is done exactly like the sign up system, since the user is _signed in_ after _signing up_.
 
 **Sign Out**
 
@@ -113,5 +116,5 @@ async signOut(parent, args, ctx, info) {
 }
 
 ```
-Another important note is that the `clearCookie` method attached to the response is actually requires the same parameters as initially provided to it in order to ensure the browser complies ([Check out the Docs](http://expressjs.com/en/api.html#res.clearCookie))
 
+Another important note is that the `clearCookie` method attached to the response is actually requires the same parameters as initially provided to it in order to ensure the browser complies ([Check out the Docs](http://expressjs.com/en/api.html#res.clearCookie))
