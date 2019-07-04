@@ -21,7 +21,6 @@ const SIGN_IN_MUTATION = gql`
 class SignIn extends Component {
   state = {
     email: '',
-    name: '',
     password: ''
   }
   saveToState = e => {
@@ -29,16 +28,12 @@ class SignIn extends Component {
     this.setState({ [name]: value })
   }
   render() {
-    const { email, name, password } = this.state
+    const { email, password } = this.state
     return (
       <Mutation
         mutation={SIGN_IN_MUTATION}
         variables={this.state}
-        refetchQueries={[
-          {
-            query: CURRENT_USER_QUERY
-          }
-        ]}
+        refetchQueries={[{ query: CURRENT_USER_QUERY }]}
       >
         {(signIn, { error, loading }) => {
           return (

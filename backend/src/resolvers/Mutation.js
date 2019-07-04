@@ -92,14 +92,16 @@ const Mutation = {
     // 2. Set a reset token and expiry on that user
     const resetToken = (await promisify(randomBytes)(20)).toString('hex')
     const resetTokenExpiry = Date.now() + 1000 * 60 * 60 // 1h from now
-    const res = await ctx.db.mutation.updateUser({
+    await ctx.db.mutation.updateUser({
       where: { email },
       data: {
         resetToken,
         resetTokenExpiry
       }
     })
-    return { message: resetToken }
+    return {
+      message: `📧 Success! 📧 The reset token has been sent to your email (${email})`
+    }
     // 3. Email them the reset token
     // TODO
   },
