@@ -25,13 +25,16 @@ const Mutation = {
     return ctx.db.mutation.deleteItem({ where }, info)
   },
 
-  async signUp(parent, args, ctx, info) {
+  async signUp(parent, { name, ...args }, ctx, info) {
     const email = args.email.toLowerCase()
+    if (args.password !== args.confirmPassword) {
+      throw new Error(`✏️ Passwords do not match! ✏️`)
+    }
     const password = await bcrypt.hash(args.password, 10)
     const user = await ctx.db.mutation.createUser(
       {
         data: {
-          ...args,
+          name,
           email,
           password,
           permissions: {
@@ -100,6 +103,14 @@ const Mutation = {
     return { message: resetToken }
     // 3. Email them the reset token
   }
+
+  // async resetPassword(parent, args, ctx, info) {
+  // 1. Find the user with the associated resetToken
+  // 2. Check if it's expired
+  // 3. Verify the new password
+  // 4. Save it to the user and clear the reset fields
+  // 5. Return the user
+  // }
 }
 
 module.exports = Mutation

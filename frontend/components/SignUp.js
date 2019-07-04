@@ -12,8 +12,14 @@ const SIGN_UP_MUTATION = gql`
     $email: String!
     $name: String!
     $password: String!
+    $confirmPassword: String!
   ) {
-    signUp(email: $email, name: $name, password: $password) {
+    signUp(
+      email: $email
+      name: $name
+      password: $password
+      confirmPassword: $confirmPassword
+    ) {
       id
       email
       name
@@ -25,14 +31,15 @@ class SignUp extends Component {
   state = {
     email: '',
     name: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   }
   saveToState = e => {
     const { value, name } = e.target
     this.setState({ [name]: value })
   }
   render() {
-    const { email, name, password } = this.state
+    const { email, name, password, confirmPassword } = this.state
     return (
       <Mutation
         mutation={SIGN_UP_MUTATION}
@@ -45,6 +52,7 @@ class SignUp extends Component {
               method="post"
               onSubmit={async e => {
                 e.preventDefault()
+                console.log(this.state)
                 await signUp()
                 this.setState({
                   email: '',
@@ -84,6 +92,16 @@ class SignUp extends Component {
                     name="password"
                     placeholder="e.g. y33zy"
                     value={password}
+                    onChange={this.saveToState}
+                  />
+                </label>
+                <label htmlFor="confirmPassword">
+                  Confirm Password
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="e.g. y33zy"
+                    value={confirmPassword}
                     onChange={this.saveToState}
                   />
                 </label>
