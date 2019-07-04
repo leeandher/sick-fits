@@ -37,11 +37,11 @@ type Mutation {
   signIn(email: String!, password: String!): User!
   signOut: SuccessMessage
   requestReset(email: String!): SuccessMessage
-  # resetPassword(
-  #   resetToken: String!
-  #   password: String!
-  #   confirmPassword: String!
-  # ): User!
+  resetPassword(
+    resetToken: String!
+    password: String!
+    confirmPassword: String!
+  ): User!
 }
 
 type Query {

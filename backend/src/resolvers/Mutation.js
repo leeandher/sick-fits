@@ -44,7 +44,7 @@ const Mutation = {
       },
       info
     )
-    // Create the JWT for this specific uses
+    // Create the JWT for this specific app
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
     // Set the JWT on the response as a cookie
     ctx.response.cookie('sf-token', token, {
@@ -65,7 +65,7 @@ const Mutation = {
       throw new Error(`❌ Invalid password, try again! ❌`)
     }
 
-    // Create the JWT for this specific uses
+    // Create the JWT for this specific app
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
     // Set the JWT on the response as a cookie
     ctx.response.cookie('sf-token', token, {
@@ -99,18 +99,47 @@ const Mutation = {
         resetTokenExpiry
       }
     })
-    console.log(res)
     return { message: resetToken }
     // 3. Email them the reset token
-  }
+    // TODO
+  },
 
-  // async resetPassword(parent, args, ctx, info) {
-  // 1. Find the user with the associated resetToken
-  // 2. Check if it's expired
-  // 3. Verify the new password
-  // 4. Save it to the user and clear the reset fields
-  // 5. Return the user
-  // }
+  async resetPassword(parent, { resetToken, ...args }, ctx, info) {
+    // 1. Verify the new password
+    if (args.password !== args.confirmPassword) {
+      throw new Error(`✏️ Passwords do not match! ✏️`)
+    }
+    // 2. Find the user with the associated resetToken
+    // 3. Check if it's expired
+    const [user] = await ctx.db.query.users({
+      where: { resetToken, resetTokenExpiry_gt: parseFloat(Date.now()) }
+    })
+    if (!user) {
+      throw new Error(`😫 Reset token is expired or invalid! 😫`)
+    }
+    // 4. Hash the password
+    const password = await bcrypt.hash(args.password, 10)
+    // 5. Save it to the user and clear the reset fields
+    const updatedUser = await ctx.db.mutation.updateUser(
+      {
+        where: { id: user.id },
+        data: {
+          password,
+          resetToken: null,
+          resetTokenExpiry: null
+        }
+      },
+      info
+    )
+    // Create the JWT for this specific app
+    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
+    ctx.response.cookie('sf-token', token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+    })
+    // 8. Return the user
+    return updatedUser
+  }
 }
 
 module.exports = Mutation
