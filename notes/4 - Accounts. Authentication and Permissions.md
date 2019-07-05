@@ -118,3 +118,59 @@ async signOut(parent, args, ctx, info) {
 ```
 
 Another important note is that the `clearCookie` method attached to the response is actually requires the same parameters as initially provided to it in order to ensure the browser complies ([Check out the Docs](http://expressjs.com/en/api.html#res.clearCookie))
+
+## Request Security
+
+One important aspect of building an full-scale GraphQL API with Prisma that you should take into account is the accessible fields available to the user. Since the client determines the information it can receive, you have to make sure that certain fields aren't available to the client, and only for the resolvers. These are things like account credentials, emails, 2FA sources, passwords, reset tokens.
+
+This can easily pass you by if you just import the generated schema from Prisma:
+
+```graphql
+# import * from './generated/prisma.graphql'
+
+type Query {
+  ...
+}
+
+type Mutation {
+  ...
+}
+```
+
+The comment acts as an import statement for the prisma types, while this is good in most cases, for verbosity, it can be harmful in others. Take a `User` type for example:
+
+```graphql
+type User implements Node {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: [Permission!]!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+```
+In this case, any time a query returns a `User` the, client can request the hashed password, or reset token.
+
+This can be fixed by just removing the fields and overwriting the previous type:
+
+```graphql
+# import * from './generated/prisma.graphql'
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  permissions: [Permission!]!
+}
+
+type Query {
+  ...
+}
+
+type Mutation {
+  ...
+}
+```
