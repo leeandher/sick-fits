@@ -174,3 +174,23 @@ type Mutation {
   ...
 }
 ```
+
+## Password Reset Flow
+
+Implementing a password reset flow can be boiled down to just implementing a few extra routes in the API. As long as you have the following mutations and steps, you should be good to go:
+
+1. Client-side email field to send the request
+2. Perform `requestReset` mutation
+3. In this mutation, check if the email is valid
+4. Set a `randomBytes` token on the account (**resetToken**)
+5. Set an expiry for the token in a timestamp (**resetTokenExpiry**)
+7. Send the token to the account holder's email via URL
+8. Setup the URL parsing on the client-side to read the token
+9. Check if the token is valid
+10. Check if the token is expired
+11. Prompt for a new password
+12. Update the new password, revoke the reset token and expiry
+13. Set the cookie, login the user
+
+
+
