@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
 import Router from 'next/router'
@@ -19,6 +20,10 @@ const SIGN_IN_MUTATION = gql`
 `
 
 class SignIn extends Component {
+  static propTypes = {
+    header: PropTypes.string,
+    samePage: PropTypes.boolean
+  }
   state = {
     email: '',
     password: ''
@@ -28,6 +33,7 @@ class SignIn extends Component {
     this.setState({ [name]: value })
   }
   render() {
+    const { header, samePage } = this.props
     const { email, password } = this.state
     return (
       <Mutation
@@ -47,11 +53,11 @@ class SignIn extends Component {
                   name: '',
                   password: ''
                 })
-                Router.push('/')
+                if (!samePage) Router.push('/')
               }}
             >
               <fieldset disabled={loading} aria-busy={loading}>
-                <h2>Already have an account?</h2>
+                <h2>{header ? header : 'Already have an account?'}</h2>
                 <ErrorMessage error={error} />
                 <label htmlFor="email">
                   Email

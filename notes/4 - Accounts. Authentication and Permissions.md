@@ -203,3 +203,8 @@ Implementing a password reset flow can be boiled down to just implementing a few
 - datamodel file
 - connect in mutation
 - check for userid cookie on request
+
+# Creating a Gate Sign in Component
+
+- routing fixes
+- renderprops children or sign in component
