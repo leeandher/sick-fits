@@ -152,6 +152,7 @@ type User implements Node {
   createdAt: DateTime!
 }
 ```
+
 In this case, any time a query returns a `User` the, client can request the hashed password, or reset token.
 
 This can be fixed by just removing the fields and overwriting the previous type:
@@ -184,13 +185,21 @@ Implementing a password reset flow can be boiled down to just implementing a few
 3. In this mutation, check if the email is valid
 4. Set a `randomBytes` token on the account (**resetToken**)
 5. Set an expiry for the token in a timestamp (**resetTokenExpiry**)
-7. Send the token to the account holder's email via URL
-8. Setup the URL parsing on the client-side to read the token
-9. Check if the token is valid
-10. Check if the token is expired
-11. Prompt for a new password
-12. Update the new password, revoke the reset token and expiry
-13. Set the cookie, login the user
+6. Send the token to the account holder's email via URL
+7. Setup the URL parsing on the client-side to read the token
+8. Check if the token is valid
+9. Check if the token is expired
+10. Prompt for a new password
+11. Update the new password, revoke the reset token and expiry
+12. Set the cookie, login the user
 
+## Sending Mail
 
+- templating
+- server hosts
 
+## Relationships
+
+- datamodel file
+- connect in mutation
+- check for userid cookie on request

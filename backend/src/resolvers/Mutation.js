@@ -7,9 +7,24 @@ const { createEmail, transport } = require('../mail')
 
 const Mutation = {
   async createItem(parent, args, ctx, info) {
-    // TODO: Check if they are logged in
+    // Check if the request has the userId on it (attached via cookies)
+    if (!ctx.request.userId) {
+      throw new Error('🙅‍♂️ You must be logged in to do that! 🙅‍♀️')
+    }
     // 'info' passes along query, so that it can get the return data
-    return ctx.db.mutation.createItem({ data: { ...args } }, info)
+    return ctx.db.mutation.createItem(
+      {
+        data: {
+          user: {
+            connect: {
+              id: ctx.request.userId
+            }
+          },
+          ...args
+        }
+      },
+      info
+    )
   },
 
   async updateItem(parent, { id, ...args }, ctx, info) {
