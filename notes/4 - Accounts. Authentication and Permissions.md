@@ -195,8 +195,44 @@ Implementing a password reset flow can be boiled down to just implementing a few
 
 ## Sending Mail
 
-- templating
-- server hosts
+There are really only a few parts to sending mail with Node.js:
+  - The templating strategy
+  - The mail servers
+
+For development purposes, one of the easiest solutions is to go with a service such as [mailtrap.io](https://mailtrap.io/). They provide you with a demo mailbox to send mail from, and all you need to do is pass in credentials (which should be in an environment file) to your `NodeMailer` client (a helpful library for easily sending mail):
+```js
+const transport = nodemailer.createTransport({
+  host: process.env.MAIL_HOST // "smtp.mailtrap.io",
+  port: process.env.MAIL_PORT // 2525,
+  auth: {
+    user: process.env.MAIL_USER // "38700db53edc57",
+    pass: process.env.MAIL_PASS // "076761e33e4b71"
+  }
+});
+```
+Without implementing a templating strategy, you're left to just setting basic inline styles on `html` as a string, which works just fine. You can check out solutions such as [MJML](https://mjml.io/) for scalable alternative templating strategies.
+
+You can send basic emails as follows:
+```js
+await transport.sendMail({
+  fromt: 'me@leander.xyz',
+  to: user.email,
+  subject: '🙌 Reset your Password! 🙌',
+  html: `
+  <div className="email" style="
+    border: 1px solid black;
+    padding: 20px;
+  ">
+    <h2>Hey there!</h2>
+    <p>
+    Your password reset token is here! \n\n <a href="${
+      process.env.FRONTEND_URL
+    }/reset?resetToken=${resetToken}">Click here to reset your password!</a>
+    </p>
+    <p>✌, Leander Rodrigues</p>
+  </div>`
+})
+```
 
 ## Relationships
 

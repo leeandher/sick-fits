@@ -117,7 +117,7 @@ const Mutation = {
       }
     })
     // 3. Email them the reset token
-    const mailRes = await transport.sendMail({
+    await transport.sendMail({
       fromt: 'me@leander.xyz',
       to: user.email,
       subject: '🙌 Reset your Sick Fits Password! 🙌',
