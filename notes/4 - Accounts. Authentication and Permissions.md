@@ -236,11 +236,119 @@ await transport.sendMail({
 
 ## Relationships
 
-- datamodel file
-- connect in mutation
-- check for userid cookie on request
+A common pain point for many applications is creating concrete relationships between items in the database, and the user's responsible for them. To do so with Prisma/GraphQL, you first need to make sure they are designated in your datamodel file:
+
+```graphql
+type Item {
+  id: ID! @id
+  title: String!
+  description: String!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  user: User! # This is the relationship declaration
+}
+```
+
+After deploying this to your live API server (`prisma deploy`), you should get the updated `prisma graphql` file after the `graphql get-schema -p prisma` hook runs.
+
+You've now set up a relationship! To start using it, take a look at this mutation example:
+
+```js
+async createItem(parent, args, ctx, info) {
+    // Check if the request has the userId on it (attached via cookies)
+    if (!ctx.request.userId) {
+      throw new Error('🙅‍♂️ You must be logged in to do that! 🙅‍♀️')
+    }
+    // Create the item and connect it with the user
+    return ctx.db.mutation.createItem(
+      {
+        data: {
+          user: {
+            connect: {
+              id: ctx.request.userId
+            }
+          },
+          ...args
+        }
+      },
+      info
+    )
+  },
+```
+
+This syntax will connect the the item to the user by using the `id` field as the relationship! Now, in queries, the following is possible to query: 
+
+```graphql
+query {
+  item(where: { id: { eq: "dajf9912l0asd" }}) {
+    id
+    title
+    user {
+      id
+      name
+      email
+    }
+  }
+}
+```
 
 # Creating a Gate Sign in Component
 
-- routing fixes
-- renderprops children or sign in component
+A gated sign-in component is really useful for creating routes that user's shouldn't have access to without being signed in. You'll find this a lot on bigger sites where you click a link to some resource, then find yourself at a login instead of the resource. After logging in, you'll be redirected to the resource, and now your account details are present in the app.
+
+To accomplish the same thing in React, all you need to do is steal the component you originally used to sign in, and re-purpose it into a wrapper.
+
+```js
+const PleaseSignIn = ({ children }) => (
+  <Query query={CURRENT_USER_QUERY}>
+    {({ data, loading }) => {
+      if (loading) return <p>⚡ Loading... ⚡</p>
+      if (!data.me) {
+        return (
+          <div>
+            <SignIn samePage header="Sign in to continue" />
+          </div>
+        )
+      }
+      return children
+    }}
+  </Query>
+)
+```
+
+This wrapper component checks with a `CURRENT_USER_QUERY` to see whether or not the current user is logged in. If so, it renders it's children, `renderProps` style. If not though, the content that is wrapped by this component is replaced with a dialog prompting the user to sign in!
+
+If there are fixes you need (e.g. routing after sign in, text content), you might have to refactor the component to include some dependent code based on the props you passed to the wrapper. You can see it up there, using the props declared in `SignIn.js`:
+
+```js
+class SignIn extends Component {
+  static propTypes = {
+    header: PropTypes.string,
+    samePage: PropTypes.boolean
+  }
+  render() {
+    const { header, samePage } = this.props
+    return (
+      <Mutation
+        mutation={SIGN_IN_MUTATION}
+        variables={this.state}
+        refetchQueries={[{ query: CURRENT_USER_QUERY }]}
+      >
+        {(signIn, { error, loading }) => {
+          return (
+            <Form
+              method="post"
+              onSubmit={async e => {
+                e.preventDefault()
+                await signIn()
+                this.setState({
+                  email: '',
+                  name: '',
+                  password: ''
+                })
+                if (!samePage) Router.push('/')
+              }}
+            >
+              <fieldset disabled={loading} aria-busy={loading}>
+                <h2>{header ? header : 'Already have an account?'}</h2>
+```
