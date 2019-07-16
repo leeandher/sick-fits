@@ -352,3 +352,5 @@ class SignIn extends Component {
               <fieldset disabled={loading} aria-busy={loading}>
                 <h2>{header ? header : 'Already have an account?'}</h2>
 ```
+
+<!-- INTROSEPCTION (getting all enum values) -->
