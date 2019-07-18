@@ -354,3 +354,4 @@ class SignIn extends Component {
 ```
 
 <!-- INTROSEPCTION (getting all enum values) -->
+<!-- Seeding Data, using props for initial state -->
