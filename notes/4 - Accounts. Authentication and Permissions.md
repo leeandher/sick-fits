@@ -355,3 +355,17 @@ class SignIn extends Component {
 
 <!-- INTROSEPCTION (getting all enum values) -->
 <!-- Seeding Data, using props for initial state -->
+
+```js
+// FOR ENUMS UDPATE
+  permissions: {
+    set: args.permissions
+  }
+```
+
+passing GQL mutations to event handler functions
+
+handlePermissionChange(event, mutationFunction)
+
+setState(stateChange, callback)
+setState(stateChange, mutationFunction ) ---> neat, since it will ensure latest state is mutated
