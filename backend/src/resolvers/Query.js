@@ -21,7 +21,6 @@ const Query = {
     // 1. Check if they are logged in
     if (!ctx.request.userId) throw new Error('🙅‍♀️ You must be logged in! 🙅‍♂️')
     // 2. Check if the user has the proper permissions
-    console.log(ctx.request.user)
     hasPermission(ctx.request.user, ['ADMIN', 'PERMISSIONUPDATE'])
     // 3. Query all the users
     return ctx.db.query.users({}, info)
