@@ -14,6 +14,7 @@ type User {
   password: String!
   resetToken: String
   resetTokenExpiry: Float
+  cart: [CartItem!]!
   permissions: [Permission] @scalarList(strategy: RELATION)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
@@ -28,6 +29,13 @@ type Item {
   price: Int!
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  user: User!
+}
+
+type CartItem {
+  id: ID! @id
+  quantity: Int! @default(value: 1)
+  item: Item! 
   user: User!
 }
 
