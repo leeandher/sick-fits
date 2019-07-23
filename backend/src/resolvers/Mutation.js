@@ -194,23 +194,28 @@ const Mutation = {
     })
     // 3. Check if that item is already in their cart
     if (existingCartItem) {
-      console.log("This item is already in their cart")
-      return ctx.db.mutation.updateCartItem({
-        where: { id: existingCartItem.id },
-        data: { quantity: existingCartItem.quantity + 1 }
-      })
+      return ctx.db.mutation.updateCartItem(
+        {
+          where: { id: existingCartItem.id },
+          data: { quantity: existingCartItem.quantity + 1 }
+        },
+        info
+      )
     }
     // 4. Increment if so, add CartItem if not
-    return ctx.db.mutation.createCartItem({
-      data: {
-        user: {
-          connect: { id: userId }
-        },
-        item: {
-          connect: { id: args.id }
+    return ctx.db.mutation.createCartItem(
+      {
+        data: {
+          user: {
+            connect: { id: userId }
+          },
+          item: {
+            connect: { id: args.id }
+          }
         }
-      }
-    })
+      },
+      info
+    )
   },
 
   async updatePermissions(parent, args, ctx, info) {
