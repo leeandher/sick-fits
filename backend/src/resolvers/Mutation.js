@@ -1,16 +1,16 @@
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const { randomBytes } = require('crypto')
-const { promisify } = require('util')
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
+const { randomBytes } = require("crypto")
+const { promisify } = require("util")
 
-const { createEmail, transport } = require('../mail')
-const { hasPermission } = require('../utils')
+const { createEmail, transport } = require("../mail")
+const { hasPermission } = require("../utils")
 
 const Mutation = {
   async createItem(parent, args, ctx, info) {
     // Check if the request has the userId on it (attached via cookies)
     if (!ctx.request.userId) {
-      throw new Error('🙅‍♂️ You must be logged in to do that! 🙅‍♀️')
+      throw new Error("🙅‍♂️ You must be logged in to do that! 🙅‍♀️")
     }
     // 'info' passes along query, so that it can get the return data
     return ctx.db.mutation.createItem(
@@ -43,7 +43,7 @@ const Mutation = {
     // 2. Check if they own the item or have the permissions
     const ownsItem = item.user.id === ctx.request.userId
     const hasPermissions = ctx.request.user.permissions.some(permission => {
-      return ['ADMIN', 'ITEMDELETE'].includes(permission)
+      return ["ADMIN", "ITEMDELETE"].includes(permission)
     })
     if (!ownsItem || !hasPermissions) {
       throw new Error("🙅‍♀️ You don't have permission to do that! 🙅‍♂️")
@@ -65,7 +65,7 @@ const Mutation = {
           email,
           password,
           permissions: {
-            set: ['USER']
+            set: ["USER"]
           }
         }
       },
@@ -74,7 +74,7 @@ const Mutation = {
     // Create the JWT for this specific app
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
     // Set the JWT on the response as a cookie
-    ctx.response.cookie('sf-token', token, {
+    ctx.response.cookie("sf-token", token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     })
@@ -95,7 +95,7 @@ const Mutation = {
     // Create the JWT for this specific app
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
     // Set the JWT on the response as a cookie
-    ctx.response.cookie('sf-token', token, {
+    ctx.response.cookie("sf-token", token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     })
@@ -103,11 +103,11 @@ const Mutation = {
   },
 
   async signOut(parent, args, ctx, info) {
-    ctx.response.clearCookie('sf-token', {
+    ctx.response.clearCookie("sf-token", {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     })
-    return { message: 'See ya!' }
+    return { message: "See ya!" }
   },
 
   async requestReset(parent, { email }, ctx, info) {
@@ -117,7 +117,7 @@ const Mutation = {
       throw new Error(`😫 No user found with that email (${email})! 😫`)
     }
     // 2. Set a reset token and expiry on that user
-    const resetToken = (await promisify(randomBytes)(20)).toString('hex')
+    const resetToken = (await promisify(randomBytes)(20)).toString("hex")
     const resetTokenExpiry = Date.now() + 1000 * 60 * 60 // 1h from now
     await ctx.db.mutation.updateUser({
       where: { email },
@@ -128,9 +128,9 @@ const Mutation = {
     })
     // 3. Email them the reset token
     await transport.sendMail({
-      fromt: 'me@leander.xyz',
+      fromt: "me@leander.xyz",
       to: user.email,
-      subject: '🙌 Reset your Sick Fits Password! 🙌',
+      subject: "🙌 Reset your Sick Fits Password! 🙌",
       html: createEmail(
         `Your password reset token is here! \n\n <a href="${
           process.env.FRONTEND_URL
@@ -173,7 +173,7 @@ const Mutation = {
     )
     // Create the JWT for this specific app
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
-    ctx.response.cookie('sf-token', token, {
+    ctx.response.cookie("sf-token", token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
     })
@@ -181,13 +181,28 @@ const Mutation = {
     return updatedUser
   },
 
+  async addToCart(parent, args, ctx, info) {
+    // 1. Make sure they are signed in
+    if (!ctx.request.userId) throw new Error("🙅‍♀️ You must be logged in! 🙅‍♂️")
+    // 2. Query the user's current cart
+    const [existingCartItem] = await ctx.db.query.cartItems({
+      where: {
+        id: args.id,
+        user: ctx.request.user,
+
+      }
+    })
+    // 3. Check if that item is already in their cart
+    // 4. Increment if so, add CartItem if not
+  },
+
   async updatePermissions(parent, args, ctx, info) {
     // 1. Check if they are logged in
-    if (!ctx.request.userId) throw new Error('🙅‍♀️ You must be logged in! 🙅‍♂️')
+    if (!ctx.request.userId) throw new Error("🙅‍♀️ You must be logged in! 🙅‍♂️")
     // 2. Get the current user
     const currentUser = ctx.request.user
     // 3. Check if they have permissions to do this
-    hasPermission(currentUser, ['ADMIN', 'PERMISSIONUPDATE'])
+    hasPermission(currentUser, ["ADMIN", "PERMISSIONUPDATE"])
     // 4. Update the permissions
     return ctx.db.mutation.updateUser(
       {
