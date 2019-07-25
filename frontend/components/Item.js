@@ -31,7 +31,7 @@ export default class Item extends Component {
             <Link href={{ pathname: "update", query: { id: id } }}>
               <button>🔨 Edit 🔨</button>
             </Link>
-            <AddToCart id={item.id}>Add to 🛒</AddToCart>
+            <AddToCart id={item.id} />
             <DeleteItem id={item.id}>🔥 Delete Item 🔥</DeleteItem>
           </div>
         </Title>
