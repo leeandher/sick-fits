@@ -9,4 +9,8 @@ _Some helpful notes for developing modern applications in React. These may be a 
  - @client directive
  - clientState apollo client property (HOC)
  - toggleCart(_, variables, client) {}
- - 
+
+
+## Displaying data
+ - nesting queries
+ - removing ugly render props
