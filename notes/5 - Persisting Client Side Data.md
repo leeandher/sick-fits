@@ -55,6 +55,60 @@ The query also doesn't have a query because it's actually reaching for a value t
 
 It may look odd, but the mutations also ignore the first parameter, with the second and third being the `variables` and the `context` objects. The first parameter isn't too important, and can usually be skipped, while the context can be de-structured into the `client` and `cache` objects as well as the `getCacheKey` function. For more info check out: https://www.apollographql.com/docs/react/essentials/local-state/#local-resolvers
 
-## Displaying data
- - nesting queries
+## Displaying Data Client-side
+
+One important concept to understand when it comes to GraphQL is the ability to drill down nested data via the relations and schema/data-model you've set up for the types. Say you have the following little simple schema:
+
+```graphql
+type Item {
+  title: String!
+  description: String!
+  price: Int!
+  user: User!
+}
+
+type User {
+  name: String!
+  email: String!
+  age: Int!
+  items: [Item!]!
+}
+```
+
+Since the two types are related to one another (through the `user` field on `Item`, and the `items` field on `User`), you can actually keep nesting the information in your query. Take a look at the following:
+
+```graphql
+query NESTED_AS_HELL {
+  items {
+    title
+    description
+    user {
+      email
+      age
+      items {
+        price
+        description
+        user {
+          age
+          name
+          email
+          items {
+            price
+            description
+            title
+            user {
+              # So on and so forth
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Why would you do that though?! Well it's useful to drill down in some more complicated data structures. Imagine if you had a **Friend List** for every user, or a **Second Owner** for every `Item`. You could get something more complicated, like the `email` of a `friend` of the `secondOwner` of this `item` made by the current `user`. Anyway that's pretty neat.
+
+## Removing Ugly Render-props
+
  - removing ugly render props
