@@ -1,9 +1,9 @@
-import styled from 'styled-components';
+import styled from "styled-components"
 
 const SickButton = styled.button`
   background: red;
   color: white;
-  font-weight: 500;
+  font-weight: 600;
   border: 0;
   border-radius: 0;
   text-transform: uppercase;
@@ -15,6 +15,6 @@ const SickButton = styled.button`
   &[disabled] {
     opacity: 0.5;
   }
-`;
+`
 
-export default SickButton;
+export default SickButton

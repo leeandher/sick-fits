@@ -1,12 +1,13 @@
-import React from 'react'
-import gql from 'graphql-tag'
-import { Query } from 'react-apollo'
-import Head from 'next/head'
-import Link from 'next/link'
+import React from "react"
+import gql from "graphql-tag"
+import { Query } from "react-apollo"
+import Head from "next/head"
+import Link from "next/link"
+import styled from "styled-components"
 
-import PaginationStyles from './styles/PaginationStyles'
+import PaginationStyles from "./styles/PaginationStyles"
 
-import { PER_PAGE } from '../config'
+import { PER_PAGE } from "../config"
 
 const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
@@ -16,6 +17,10 @@ const PAGINATION_QUERY = gql`
       }
     }
   }
+`
+
+const StylishAnchor = styled.a`
+  color: ${({ theme }) => theme.black};
 `
 
 const Pagination = ({ page }) => (
@@ -35,13 +40,13 @@ const Pagination = ({ page }) => (
           <Link
             prefetch
             href={{
-              pathname: 'items',
+              pathname: "items",
               query: { page: page - 1 }
             }}
           >
-            <a className="prev" aria-disabled={page <= 1}>
+            <StylishAnchor className="prev" aria-disabled={page <= 1}>
               ← Prev
-            </a>
+            </StylishAnchor>
           </Link>
           <p>
             Page {page} of {pages}
@@ -50,13 +55,13 @@ const Pagination = ({ page }) => (
           <Link
             prefetch
             href={{
-              pathname: 'items',
+              pathname: "items",
               query: { page: page + 1 }
             }}
           >
-            <a className="next" aria-disabled={page >= pages}>
+            <StylishAnchor className="next" aria-disabled={page >= pages}>
               Next →
-            </a>
+            </StylishAnchor>
           </Link>
         </PaginationStyles>
       )
