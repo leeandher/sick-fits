@@ -28,7 +28,7 @@ const Cart = () => {
   return (
     <User>
       {({ data: { me } }) =>
-        console.log(me) || !me ? null : (
+        !me ? null : (
           <Mutation mutation={TOGGLE_CART_MUTATION}>
             {toggleCart => (
               <Query query={LOCAL_STATE_QUERY}>
