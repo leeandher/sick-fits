@@ -112,3 +112,5 @@ Why would you do that though?! Well it's useful to drill down in some more compl
 ## Removing Ugly Render-props
 
  - removing ugly render props
+
+## Optimistic Response/UI
