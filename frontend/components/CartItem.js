@@ -19,24 +19,45 @@ const CartItemStyles = styled.li`
   p {
     margin: 0;
   }
+  span {
+    margin-right: 10px;
+    width: 100px;
+    text-align: center;
+    font-size: 2rem;
+  }
 `
 
-const CartItem = ({ cartItem: { id, item, quantity } }) => (
-  <CartItemStyles>
-    <img width="100" src={item.image} alt={item.title} />
-    <div className="cart-item-details">
-      <h3>{item.title}</h3>
-      <p>
-        <strong>{formatMoney(item.price * quantity)}</strong>
-        {" - "}
-        <em>
-          {quantity} &times; {formatMoney(item.price)} each
-        </em>
-      </p>
-    </div>
-    <RemoveFromCart id={id} />
-  </CartItemStyles>
-)
+const CartItem = ({ cartItem: { id, item, quantity } }) => {
+  if (!item) {
+    return (
+      <CartItemStyles>
+        <span role="img" aria-label="shrug">
+          ❌🛒❌
+        </span>
+        <p>
+          The previously saved item is no longer available. Sorry about that!
+        </p>
+        <RemoveFromCart id={id} />
+      </CartItemStyles>
+    )
+  }
+  return (
+    <CartItemStyles>
+      <img width="100" src={item.image} alt={item.title} />
+      <div className="cart-item-details">
+        <h3>{item.title}</h3>
+        <p>
+          <strong>{formatMoney(item.price * quantity)}</strong>
+          {" - "}
+          <em>
+            {quantity} &times; {formatMoney(item.price)} each
+          </em>
+        </p>
+      </div>
+      <RemoveFromCart id={id} />
+    </CartItemStyles>
+  )
+}
 
 CartItem.propTypes = {
   cartItem: PropTypes.object.isRequired

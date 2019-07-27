@@ -40,7 +40,8 @@ const Nav = () => (
               My Cart
               <CartCount
                 count={me.cart.reduce(
-                  (total, { quantity }) => total + quantity,
+                  (total, { quantity, item }) =>
+                    !item ? total : total + quantity,
                   0
                 )}
               />
