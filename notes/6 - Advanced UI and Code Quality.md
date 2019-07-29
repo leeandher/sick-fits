@@ -81,10 +81,6 @@ const Composed = adopt({
 })
 ```
 
-## Apollo Consumers
-
-The whole `Provider` and `Consumer` setup can sometimes be confusing when you're working with more complicated project structures. Pretty much your `Provider` just sits above the rest of your application, allowing you at access the data it has attached to it wherever you would like to in your application, so long as you set up a `Consumer`. Often times, the way to go with setting up consumers is dependent on the API of the library that you're working with. In this scenario it's the **Apollo Client** for _GraphQL_. The preferred, cleaner way of doing things is by setting up HOCs or just using the Apollo Render-props components (such as `<Query />`, or `<Mutation />`).
-
 ## Debouncing Events
 
 Debouncing as a concept pretty easy to understand and thankfully easy to implement thanks to `lodash` but easy to miss. Often times when creating client side applications, you'll write some code to run on user input, but if this ever involves a data source it might cause some issues. Since React re-renders super fast if you implement something like a search bar, your autocomplete could end up pinging a server multiple times in super quick succession and you'll find yourself sending hundreds of request to a demo server, and might end up with crazy fines or a rate-limited server!
@@ -196,3 +192,30 @@ class Search extends Component {
   }
 }
 ```
+
+## Apollo Consumers
+
+The whole `Provider` and `Consumer` setup can sometimes be confusing when you're working with more complicated project structures. Pretty much your `Provider` just sits above the rest of your application, allowing you at access the data it has attached to it wherever you would like to in your application, so long as you set up a `Consumer`. Often times, the way to go with setting up consumers is dependent on the API of the library that you're working with. In this scenario it's the **Apollo Client** for _GraphQL_. The preferred, cleaner way of doing things is by setting up HOCs or just using the Apollo Render-props components (such as `<Query />`, or `<Mutation />`), but occasionally, if your use case is niche enough you may need to manually set up a consumer.
+
+The consumer is just a specific component, which will access the data set up from the `Provider` with render-props or something. In our case, it passes the actual `ApolloClient` object directly to our react component so we can actually send a query without the pre-built component!
+
+```js
+<ApolloConsumer>
+  {client => (
+    <input
+      {...getInputProps({
+        type: "search",
+        placeholder: "Search!",
+        id: "search",
+        className: loading ? "loading" : "",
+        onChange: e => {
+          e.persist()
+          this.handleSearch(e.target.value, client)
+        }
+      })}
+    />
+  )}
+</ApolloConsumer>
+```
+
+It's actually pretty easy to understand, but when you'd need to do this kind of thing is kinda rare. Often times when you're using another library, you may be limited to their API, and its in these scenarios where you'll find yourself breaking this thing out. Like in the app built along with these notes, it was while implementing _Downshift_, as talked about above!
