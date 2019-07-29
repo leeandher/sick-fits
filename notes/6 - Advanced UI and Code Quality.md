@@ -82,6 +82,9 @@ const Composed = adopt({
 ```
 
 ## Consumers
+
+
+
 ## Debouncing Events
 
 Debouncing as a concept pretty easy to understand and thankfully easy to implement thanks to `lodash` but easy to miss. Often times when creating client side applications, you'll write some code to run on user input, but if this ever involves a data source it might cause some issues. Since React re-renders super fast if you implement something like a search bar, your autocomplete could end up pinging a server multiple times in super quick succession and you'll find yourself sending hundreds of request to a demo server, and might end up with crazy fines or a rate-limited server!
