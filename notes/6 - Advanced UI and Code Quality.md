@@ -25,7 +25,7 @@ render() {
             return (
               <Mutation mutation={TOGGLE_LOCAL_STATE_MUTATION}>
                 {(toggleFunction) => {
-                  // some actual JSX markup which uses the 
+                  // some actual JSX markup which uses the
                   // - user
                   // - localState
                   // - toggleFunction
@@ -55,7 +55,7 @@ render() {
   return (
     <Composed>
       {({user, localState, toggleFunction}) => {
-        // some actual JSX markup which uses the 
+        // some actual JSX markup which uses the
         // - user
         // - localState
         // - toggleFunction
@@ -81,15 +81,15 @@ const Composed = adopt({
 })
 ```
 
-## Consumers
+## Apollo Consumers
 
-
+The whole `Provider` and `Consumer` setup can sometimes be confusing when you're working with more complicated project structures. Pretty much your `Provider` just sits above the rest of your application, allowing you at access the data it has attached to it wherever you would like to in your application, so long as you set up a `Consumer`. Often times, the way to go with setting up consumers is dependent on the API of the library that you're working with. In this scenario it's the **Apollo Client** for _GraphQL_. The preferred, cleaner way of doing things is by setting up HOCs or just using the Apollo Render-props components (such as `<Query />`, or `<Mutation />`).
 
 ## Debouncing Events
 
 Debouncing as a concept pretty easy to understand and thankfully easy to implement thanks to `lodash` but easy to miss. Often times when creating client side applications, you'll write some code to run on user input, but if this ever involves a data source it might cause some issues. Since React re-renders super fast if you implement something like a search bar, your autocomplete could end up pinging a server multiple times in super quick succession and you'll find yourself sending hundreds of request to a demo server, and might end up with crazy fines or a rate-limited server!
 
-To avoid this, there's a front-end concept known as **debouncing**, which just means, only send this event once for every preset amount of time. In the example above, you could implement a debounce catcher to only send the user's input value to the autocomplete API every 350 ms or something, and save yourself a headache. Here's an implementation with `lodash`: 
+To avoid this, there's a front-end concept known as **debouncing**, which just means, only send this event once for every preset amount of time. In the example above, you could implement a debounce catcher to only send the user's input value to the autocomplete API every 350 ms or something, and save yourself a headache. Here's an implementation with `lodash`:
 
 ```js
 import debounce from "lodash.debounce"
@@ -126,21 +126,22 @@ const Search = () => {
 ## Implementing Downshift
 
 Downshift is a client-side library which goes ahead and implements a lot of the ideal functionality for search bars. There's a lot of little actions which can be annoying to implement yourself, but seems natural when your browsing. For example:
- - using arrow keys
- - clicking off the field hides the suggestions
- - adding the selected item to as a ghost to the input field
- - selecting the suggestion fills the input field
- - allowing styling to items selected or note
- - and much more...
-Downshift is the go-to library for this stuff since its API is easy to use and does everything in a accessible, easy way.
+
+- using arrow keys
+- clicking off the field hides the suggestions
+- adding the selected item to as a ghost to the input field
+- selecting the suggestion fills the input field
+- allowing styling to items selected or note
+- and much more...
+  Downshift is the go-to library for this stuff since its API is easy to use and does everything in a accessible, easy way.
 
 After importing `Downshift` from the `downshift` package, you implement it as an render prop component, and extract the props you want:
 
 ```js
 render() {
   return (
-    <Downshift 
-      onChange={this.handleSelection} 
+    <Downshift
+      onChange={this.handleSelection}
       itemToString={item => (item === null ? "" : item.title)}
     >
       {({
@@ -157,23 +158,24 @@ render() {
 }
 ```
 
-As seen above there's a lot of functionality in the props, but the basis of it is that you have access to all these APIs in your markup, so you can show something based on the `highlightedIndex` or if the `isOpen` is true. 
+As seen above there's a lot of functionality in the props, but the basis of it is that you have access to all these APIs in your markup, so you can show something based on the `highlightedIndex` or if the `isOpen` is true.
 
 The actual items that you pass to downshift are declared as follows:
+
 ```js
-{items.map((item, i) => (
-  <DropDownItem
-    {...getItemProps({ item })}
-    key={item.id}
-  >
-    {item.title}
-  </DropDownItem>
-))}
+{
+  items.map((item, i) => (
+    <DropDownItem {...getItemProps({ item })} key={item.id}>
+      {item.title}
+    </DropDownItem>
+  ))
+}
 ```
 
 Usually these are gonna be complex objects as your items, so that's what the props you set on the actual DownShift component are for:
- - `onChange` indicates what happens when the user selects an item from the dropdown
- - `itemToString` indicates how your item should be entered as a string into the input when they select it
+
+- `onChange` indicates what happens when the user selects an item from the dropdown
+- `itemToString` indicates how your item should be entered as a string into the input when they select it
 
 All the other intricacies can be seen over at the docs: [https://github.com/downshift-js/downshift](https://github.com/downshift-js/downshift)
 
