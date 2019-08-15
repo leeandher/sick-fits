@@ -62,12 +62,14 @@ const Cart = () => {
                 </CartItem>
               ))}
             </ul>
-            <footer>
-              <p>{formatMoney(calcTotalPrice(me.cart))}</p>
-              <Merchant>
-                <SickButton>Checkout</SickButton>
-              </Merchant>
-            </footer>
+            {me.cart.length ? (
+              <footer>
+                <p>{formatMoney(calcTotalPrice(me.cart))}</p>
+                <Merchant>
+                  <SickButton>Checkout</SickButton>
+                </Merchant>
+              </footer>
+            ) : null}
           </CartStyles>
         )
       }}

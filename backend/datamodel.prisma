@@ -38,6 +38,7 @@ type CartItem {
   item: Item 
   user: User!
 }
+
 type OrderItem {
   id: ID! @id
   title: String!

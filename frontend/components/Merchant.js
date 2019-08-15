@@ -30,10 +30,9 @@ class Merchant extends Component {
   totalItems = cart => {
     return cart.reduce((total, cartItem) => total + cartItem.quantity, 0)
   }
-  onToken = ({ id }, createOrder) => {
-    // Send the ID server-side
-    // Manually call the mutation once we have the stripe token
-    createOrder({
+  onToken = async ({ id }, createOrder) => {
+    // Parse the stripe ID and send it server side to perform the transaction
+    const order = await createOrder({
       variables: { token: id }
     }).catch(err => alert(err.message))
   }
@@ -51,7 +50,9 @@ class Merchant extends Component {
                 amount={calcTotalPrice(me.cart)}
                 name="Sick Fits"
                 description={`Order of ${this.totalItems(me.cart)} sick items!`}
-                image={me.cart[0].item && me.cart[0].item.image}
+                image={
+                  me.cart.length && me.cart[0].item && me.cart[0].item.image
+                }
                 stripeKey={STRIPE_KEY}
                 currency="CAD"
                 email={me.email}
