@@ -30,9 +30,8 @@ class Merchant extends Component {
   totalItems = cart => {
     return cart.reduce((total, cartItem) => total + cartItem.quantity, 0)
   }
-  onToken = (id, createOrder) => {
+  onToken = ({ id }, createOrder) => {
     // Send the ID server-side
-    console.log(id)
     // Manually call the mutation once we have the stripe token
     createOrder({
       variables: { token: id }

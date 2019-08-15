@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const { randomBytes } = require("crypto")
 const { promisify } = require("util")
+const stripe = require("../stripe")
 
 const { createEmail, transport } = require("../mail")
 const { hasPermission } = require("../utils")
@@ -262,7 +263,7 @@ const Mutation = {
     )
   },
 
-  async createOrder(parent, args, ctx, info) {
+  async createOrder(parent, { token }, ctx, info) {
     // 1. Query the current user, make sure they're signed in
     const { userId } = ctx.request
     if (!userId) throw new Error("🙅‍♀️ You must be logged in! 🙅‍♂️")
@@ -289,9 +290,13 @@ const Mutation = {
       (total, cartItem) => total + cartItem.quantity * cartItem.item.price,
       0
     )
-    console.log("Going to charge CC!")
-    console.log(amount)
     // 3. Create the stripe charge
+    console.log(JSON.stringify(token))
+    const charge = await stripe.charges.create({
+      amount,
+      currency: "CAD",
+      source: token
+    })
     // 4. Convert the CartItems to OrderItems
     // 5. Create the Order
     // 6. Clear the user's cart, delete the CartItems
