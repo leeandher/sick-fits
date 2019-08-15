@@ -46,6 +46,7 @@ type Mutation {
   addToCart(id: ID!): CartItem
   removeFromCart(id: ID!): CartItem
   updatePermissions(permissions: [Permission], userId: ID!): User
+  createOrder(token: String!): Order!
 }
 
 type Query {

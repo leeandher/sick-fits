@@ -260,6 +260,42 @@ const Mutation = {
       },
       info
     )
+  },
+
+  async createOrder(parent, args, ctx, info) {
+    // 1. Query the current user, make sure they're signed in
+    const { userId } = ctx.request
+    if (!userId) throw new Error("🙅‍♀️ You must be logged in! 🙅‍♂️")
+    const user = await ctx.db.query.user(
+      { where: { id: userId } },
+      `{
+        id 
+        name 
+        email 
+        cart { 
+          id
+          quantity
+          item { 
+            title 
+            price 
+            id 
+            description
+          }
+        }
+      }`
+    )
+    // 2. Recalculate the total for the price
+    const amount = user.cart.reduce(
+      (total, cartItem) => total + cartItem.quantity * cartItem.item.price,
+      0
+    )
+    console.log("Going to charge CC!")
+    console.log(amount)
+    // 3. Create the stripe charge
+    // 4. Convert the CartItems to OrderItems
+    // 5. Create the Order
+    // 6. Clear the user's cart, delete the CartItems
+    // 7. Return the order to the client
   }
 }
 
