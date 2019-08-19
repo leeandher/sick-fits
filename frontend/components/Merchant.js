@@ -31,10 +31,15 @@ class Merchant extends Component {
     return cart.reduce((total, cartItem) => total + cartItem.quantity, 0)
   }
   onToken = async ({ id }, createOrder) => {
+    NProgress.start()
     // Parse the stripe ID and send it server side to perform the transaction
-    const order = await createOrder({
+    const { data } = await createOrder({
       variables: { token: id }
     }).catch(err => alert(err.message))
+    Router.push({
+      pathname: "/order",
+      query: { id: data.createOrder.id }
+    })
   }
   render() {
     const { children } = this.props
