@@ -29,7 +29,7 @@ const Query = {
     const where = { id: ctx.request.userId }
     return ctx.db.query.user({ where }, info)
   },
-  async orders(parent, args, ctx, info) {
+  async orders(parent, { orderBy }, ctx, info) {
     const { userId, user } = ctx.request
     // 1. Check if they are logged in
     if (!userId) throw new Error("🙅‍♀️ You must be logged in! 🙅‍♂️")
@@ -38,7 +38,10 @@ const Query = {
       throw new Error("❌ Sorry, you don't have the proper permissions ❌")
     }
     // 3. Query their orders
-    return ctx.db.query.orders({ where: { user: { id: userId } } }, info)
+    return ctx.db.query.orders(
+      { where: { user: { id: userId } }, orderBy },
+      info
+    )
   },
   async order(
     parent,

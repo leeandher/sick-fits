@@ -8,6 +8,7 @@ import NProgress from "nprogress"
 
 import ErrorMessage from "./ErrorMessage"
 import User, { CURRENT_USER_QUERY } from "./User"
+import { USER_ORDERS_QUERY } from "./OrderList"
 
 import calcTotalPrice from "../lib/calcTotalPrice"
 import { STRIPE_KEY } from "../config"
@@ -48,7 +49,10 @@ class Merchant extends Component {
         {({ data: { me } }) => (
           <Mutation
             mutation={CREATE_ORDER_MUTATION}
-            refetchQueries={[{ query: CURRENT_USER_QUERY }]}
+            refetchQueries={[
+              { query: CURRENT_USER_QUERY },
+              { query: USER_ORDERS_QUERY }
+            ]}
           >
             {(createOrder, { data }) => (
               <StripeCheckout
