@@ -5,12 +5,12 @@ import { Query } from "react-apollo"
 import { format } from "date-fns"
 import Head from "next/head"
 import formatMoney from "../lib/formatMoney"
-import Error from "./ErrorMessage"
+import ErrorMessage from "./ErrorMessage"
 import OrderStyles from "./styles/OrderStyles"
 
 const SINGLE_ORDER_QUERY = gql`
   query SINGLE_ORDER_QUERY($id: ID!) {
-    order(id: $id) {
+    order(where: { id: $id }) {
       id
       charge
       total
@@ -40,7 +40,7 @@ class Order extends Component {
       <Query query={SINGLE_ORDER_QUERY} variables={{ id }}>
         {({ data: { order }, error, loading }) => {
           if (loading) return <p>⚡ Loading... ⚡</p>
-          if (error) return <p>❌ Error ❌: {error.message}</p>
+          if (error) return <ErrorMessage error={error} />
           return (
             <OrderStyles>
               <Head>
