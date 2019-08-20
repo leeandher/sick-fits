@@ -18,7 +18,6 @@ const USER_ORDERS_QUERY = gql`
       items {
         id
         title
-        price
         description
         quantity
         image
@@ -33,13 +32,16 @@ const ListWrap = styled.ul`
   grid-template-columns: repeat(auto-fit, minmax(40%, 1fr));
 `
 const MainWrap = styled.div`
-  h2 > span {
-    padding: 1rem;
-    background: ${({ theme }) => theme.red};
-    color: white;
-    line-height: 1;
-    transform: skew(-6deg);
-    display: inline-block;
+  h2 {
+    text-align: center;
+    span {
+      padding: 1rem;
+      background: ${({ theme }) => theme.red};
+      color: white;
+      line-height: 1;
+      transform: skew(-6deg);
+      display: inline-block;
+    }
   }
 `
 
@@ -60,30 +62,36 @@ class OrderList extends Component {
               </h2>
               <ListWrap>
                 {orders.map(order => (
-                  <Link
-                    href={{ pathname: "order", query: { id: order.id } }}
-                    key={order.id}
-                  >
-                    <div>
-                      <p>
-                        <span>Order ID:</span>
-                        <span>{order.id}</span>
-                      </p>
-                      <p>
-                        <span>Date:</span>
-                        <span>
-                          {formatDistance(
-                            order.createdAt,
-                            "MMMM d, YYY h:mm a"
-                          )}
-                        </span>
-                      </p>
-                      <p>
-                        <span>Total:</span>
-                        <span>{formatMoney(order.total)}</span>
-                      </p>
-                    </div>
-                  </Link>
+                  <OrderItemStyles key={order.id}>
+                    <Link
+                      href={{ pathname: "order", query: { id: order.id } }}
+                      key={order.id}
+                    >
+                      <a>
+                        <div className="order-meta">
+                          <p>
+                            {order.items.reduce(
+                              (total, item) => total + item.quantity,
+                              0
+                            )}{" "}
+                            Items
+                          </p>
+                          <p>{order.items.length} Products</p>
+                          <p>{formatDistance(order.createdAt, new Date())}</p>
+                          <p>{formatMoney(order.total)}</p>
+                        </div>
+                        <div className="images">
+                          {order.items.map(item => (
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              key={item.id}
+                            />
+                          ))}
+                        </div>
+                      </a>
+                    </Link>
+                  </OrderItemStyles>
                 ))}
               </ListWrap>
             </MainWrap>
