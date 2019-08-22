@@ -293,7 +293,6 @@ const Mutation = {
       0
     )
     // 3. Create the stripe charge
-    console.log(JSON.stringify(token))
     const charge = await stripe.charges.create({
       amount,
       currency: "CAD",
@@ -321,7 +320,7 @@ const Mutation = {
     // 6. Clear the user's cart, delete the CartItems
     const cartItemIds = user.cart.map(cartItem => cartItem.id)
     await ctx.db.mutation.deleteManyCartItems({ where: { id_in: cartItemIds } })
-    // 7. Return the order to the
+    // 7. Return the order to the frontend
     return order
   }
 }
