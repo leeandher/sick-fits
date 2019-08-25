@@ -21,7 +21,7 @@ With React, setting up an entire Stripe checkout flow is really just a few steps
     description={`Order of ${this.totalItems(user.cart)} items!`}
     image={user.cart[0].item.image}
     stripeKey={PUBLISHABLE_STRIPE_KEY}
-    currency="CAD"
+    currency="USD"
     email={user.email}
     token={res => this.onToken(res, createOrder)}
   >
@@ -110,7 +110,7 @@ Step 3 is something pretty much directly from the Stripe API:
 ```js
 const charge = await stripe.charges.create({
   amount,
-  currency: "CAD",
+  currency: "USD",
   source: token
 })
 ```

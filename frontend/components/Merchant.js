@@ -63,7 +63,7 @@ class Merchant extends Component {
                   me.cart.length && me.cart[0].item && me.cart[0].item.image
                 }
                 stripeKey={STRIPE_KEY}
-                currency="CAD"
+                currency="USD"
                 email={me.email}
                 token={res => this.onToken(res, createOrder)}
               >

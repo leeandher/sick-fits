@@ -295,7 +295,7 @@ const Mutation = {
     // 3. Create the stripe charge
     const charge = await stripe.charges.create({
       amount,
-      currency: "CAD",
+      currency: "USD",
       source: token
     })
     // 4. Convert the CartItems to OrderItems
