@@ -1,9 +1,3 @@
-# Advanced React
-
-_Some helpful notes for developing modern applications in React. These may be a good reference!_
-
----
-
 ## Client-side GraphQL with Apollo
 
 There are going to be certain situations where you'll want data throughout your application in one easy way to fetch it. Usually you'd reach for Redux or the React Context API in these situations, but you're already wrapping you application in the `<ApolloProvider>` HOC, so why add some more dependencies? Plus, you already have some nice GraphQL queries to your backend, just add some special directives and you'll be able to interface directly with your client store as if it were a full fledged database.

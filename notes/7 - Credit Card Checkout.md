@@ -1,9 +1,3 @@
-# Advanced React
-
-_Some helpful notes for developing modern applications in React. These may be a good reference!_
-
----
-
 ## Introduction to Stripe
 
 Stripe is a really useful way for handling credit cards in your online store. The main selling point is that as a developer, you no longer have to deal with the hassle of handling your user's credit cards and associated data, or worry about the charges, taxes, international fees, exchange rates, or any of that stuff. Instead, all you have to do in your application, is pass the user through a **Stripe Checkout**, and then parse the information that comes back from that.

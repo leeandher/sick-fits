@@ -1,9 +1,3 @@
-# Advanced React
-
-_Some helpful notes for developing modern applications in React. These may be a good reference!_
-
----
-
 ## CSS in JS
 
 Styled Components is just one of many of what are called '_CSS in JS_' libraries. These self-explanatory packages let you write all your styling in JS files, which then get compiled into custom classes/style tags along with taking care of the boring stuff like _vendor prefixing_. Whether or not these libraries are better/cleaner than SCSS or standard CSS is a subjective, but there are some cool things, that these libraries let you do.
