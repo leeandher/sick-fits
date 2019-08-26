@@ -17,4 +17,11 @@ Shallow
 
 Mounting
 - actually dives into the content of the component
+- renders spans and lis, and styled-component class name
+- good bc its close to the environment the user will see
+
+## Snapshot Testing
+
+- updating snapshots
+- how snapshots work
 
