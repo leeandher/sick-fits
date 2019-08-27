@@ -37,11 +37,35 @@ describe("formatMoney function", () => {
 
 ## Mocking
 
-Mocking is a more in-depth concept related to testing
+Mocking is a more in-depth concept related to testing wherein you write tests so that they don't reach into external data sources. That means no databases, no API calls, nothing that isn't contained in the test. The reason for this is because you want to be testing your app, you don't want to be testing an external data source.
 
-- benefits over external APIs
+_If you run the data source as well, then you should be writing tests for the data source as well, but they shouldn't be related to the app._
 
-Shallow
+So instead of fetching data in your app, you can just describe the data that comes back if it _were successful_, and test how your application uses it. If you ping an endpoint for a list of languages, and reorder them in your app, mocking is just having the list of languages stored in the test, and only testing how you reorder them.
+
+In jest, it'll look a little something like this:
+
+```js
+describe("mocking a function", () => {
+  it("can fetch data", async () => {
+    api.fetchData = jest.fn().mockResolvedValue({
+      message: "success",
+      status: 200
+    })
+    const outputData = await api.fetchData()
+    expect(outputData).toHaveProperty("message", "success")
+    expect(outputData).toHaveProperty("status", 200)
+  })
+})
+```
+
+One of the major benefits from mocking return data is that your tests will take much less time to run compared to if they had to reach outside themselves and get the data on their own. It makes them much less brittle as well, since you don't have to worry about the external data source not working, or changing how the return data is shaped.
+
+## React Testing Concepts
+
+There are a few concepts in testing that are unique to React (or more generally, frontend frameworks in JavaScript), and those will often involve transforming code to HTML. Here's a little explanation of what they are:
+
+### Shallow Rendering
 
 - doesnt render nested components
 - only top level
