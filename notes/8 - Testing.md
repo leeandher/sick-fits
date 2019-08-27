@@ -67,16 +67,50 @@ There are a few concepts in testing that are unique to React (or more generally,
 
 ### Shallow Rendering
 
-- doesnt render nested components
-- only top level
+Shallow rendering refers to taking a React Component and only rendering the surface level of it's children. That means, whatever other react components the parent contains, those will show up in the return value from the shallow render. Shallow rendering is much simpler and used often to test self-contained components, where you only really need to know whether the props affect the content or whether the component has rendered.
 
-Mounting
+Let's go through an example, the following code represents a component `<Parent />`:
 
-- actually dives into the content of the component
-- renders spans and lis, and styled-component class name
-- good bc its close to the environment the user will see
+```jsx
+<Wrapper>
+  <Child>
+    {data.map(item => <li>{item}<li>)}
+  </Child>
+</Wrapper>
+```
+
+If we shallow render this component, it would look something like this:
+
+```js
+<Wrapper>
+  <Child>{{...}}</Child>
+</Wrapper>
+```
+
+The output is purely top level, and doesn't actually render the HTML that JSX is converted to.
+
+### Mounting
+
+Mounting a component is sort of different, in that it actually renders out the component in a browser like environment, and we get the raw HTML that would be sent to the client in our actual app. Usually this sort of thing is preferred since as a general rule of practice **we want our testing environment as close to the client environment as possible**, and mounting lends to that. The complicated stuff comes with things like `styled-components` and other libraries which randomly generate classnames and stuff, but we can also safely ignore things like render-props components, since we get the output of the whole thing anyway!
+
+In the example above, a mounted `<Parent />` component would look something like this
+
+```html
+<section class="wrapper">
+  <div class="child">
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+  </div>
+</section>
+```
+
+Now we can see the actual data output and compare it to what we'd expect in our test, making sure that classes, elements and values all match up.
 
 ## Snapshot Testing
 
-- updating snapshots
-- how snapshots work
+Snapshot testing is the basis for testing React Components, and its a concept built on _shallow rendering/mounting_ components. It's super simple, a snapshot test just renders the component (shallow or mount) and compares it to a _snapshot_ of the component it has saved in a separate file. All it does is scan both and make sure they are identical, and will point out to the test-runner any changes that have been made.
+
+With snapshot testing, if you make a change to a component, it fails the test, so that means new features always fail. Still though, its super simple, jest lets you simple press `u` on the test runner, and the snapshots will update.
+
+A benefit of this is that you'll be able to track the snapshots using git, along with your regular components, meaning if someone changes a component, they can also change the snapshot tests. This will let reviewers see the logic change in the component, along with the visual change to the UI, all in one!
