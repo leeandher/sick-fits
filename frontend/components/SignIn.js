@@ -22,7 +22,7 @@ const SIGN_IN_MUTATION = gql`
 class SignIn extends Component {
   static propTypes = {
     header: PropTypes.string,
-    samePage: PropTypes.boolean
+    samePage: PropTypes.bool
   }
   state = {
     email: '',
