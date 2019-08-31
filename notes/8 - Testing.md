@@ -114,3 +114,8 @@ Snapshot testing is the basis for testing React Components, and its a concept bu
 With snapshot testing, if you make a change to a component, it fails the test, so that means new features always fail. Still though, its super simple, jest lets you simple press `u` on the test runner, and the snapshots will update.
 
 A benefit of this is that you'll be able to track the snapshots using git, along with your regular components, meaning if someone changes a component, they can also change the snapshot tests. This will let reviewers see the logic change in the component, along with the visual change to the UI, all in one!
+
+## Mocking Apollo
+
+- Queries and Mutations
+- Simulating events
