@@ -1,14 +1,14 @@
-import gql from "graphql-tag"
-import React, { Component } from "react"
-import Form from "./styles/Form"
-import { Mutation } from "react-apollo"
-import Router from "next/router"
+import gql from 'graphql-tag'
+import React, { Component } from 'react'
+import Form from './styles/Form'
+import { Mutation } from 'react-apollo'
+import Router from 'next/router'
 
-import ErrorMessage from "./ErrorMessage"
+import ErrorMessage from './ErrorMessage'
 
-import { IMAGE_ENDPOINT } from "../config"
+import { IMAGE_ENDPOINT } from '../config'
 
-export const CREATE_ITEM_MUTATION = gql`
+const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
     $title: String!
     $description: String!
@@ -30,49 +30,59 @@ export const CREATE_ITEM_MUTATION = gql`
 
 class CreateItem extends Component {
   state = {
-    title: "",
-    description: "",
-    image: "",
-    largeImage: "",
+    title: '',
+    description: '',
+    image: '',
+    largeImage: '',
     price: 0,
-    uploading: false
+    uploading: false,
   }
 
   handleChange = ({ target: { name, type, value } }) => {
-    const stateValue = type === "number" ? parseFloat(value) : value
+    const stateValue = type === 'number' ? parseFloat(value) : value
     this.setState({ [name]: stateValue })
   }
 
   uploadFile = async e => {
     const [file] = e.target.files
     const data = new FormData()
-    data.append("file", file)
+    data.append('file', file)
     // Select the correct cloudinary upload-preset configuration
-    data.append("upload_preset", "sick-fits")
+    data.append('upload_preset', 'sick-fits')
     await this.setState({ uploading: true })
     const res = await fetch(IMAGE_ENDPOINT, {
-      method: "POST",
-      body: data
+      method: 'POST',
+      body: data,
     })
     const upload = await res.json()
     if (upload.error) {
       window.alert(upload.error.message)
       return this.setState({ uploading: false })
     }
-    console.log(upload)
     this.setState({
       image: upload.secure_url,
       largeImage: upload.eager[0].secure_url,
-      uploading: false
+      uploading: false,
     })
   }
 
   render() {
-    const { description, image, price, title, uploading } = this.state
+    const {
+      description,
+      image,
+      largeImage,
+      price,
+      title,
+      uploading,
+    } = this.state
     return (
-      <Mutation mutation={CREATE_ITEM_MUTATION} variables={this.state}>
+      <Mutation
+        mutation={CREATE_ITEM_MUTATION}
+        variables={{ description, image, price, title, largeImage }}
+      >
         {(createItem, { loading, error }) => (
           <Form
+            data-test="create"
             onSubmit={async e => {
               e.preventDefault()
               if (uploading) return false
@@ -80,8 +90,8 @@ class CreateItem extends Component {
               const { data } = await createItem()
               // Send them to the single item page
               Router.push({
-                pathname: "/item",
-                query: { id: data.createItem.id }
+                pathname: '/item',
+                query: { id: data.createItem.id },
               })
             }}
           >
@@ -104,9 +114,9 @@ class CreateItem extends Component {
                     src={image}
                     alt="Upload Preview"
                     style={{
-                      maxWidth: "300px",
-                      maxHeight: "200px",
-                      padding: "1rem"
+                      maxWidth: '300px',
+                      maxHeight: '200px',
+                      padding: '1rem',
                     }}
                   />
                 )}
@@ -144,7 +154,7 @@ class CreateItem extends Component {
                   placeholder="Enter a Description"
                   value={description}
                   onChange={this.handleChange}
-                  style={{ boxShadow: "none" }}
+                  style={{ boxShadow: 'none' }}
                   required
                 />
               </label>
@@ -158,3 +168,4 @@ class CreateItem extends Component {
 }
 
 export default CreateItem
+export { CREATE_ITEM_MUTATION }
