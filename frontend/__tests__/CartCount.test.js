@@ -1,8 +1,7 @@
-import { shallow, mount } from "enzyme"
+import { shallow } from "enzyme"
 import toJSON from "enzyme-to-json"
 
 import CartCount from "../components/CartCount"
-import { wrap } from "module"
 
 describe("<CartCount />", () => {
   it("renders", () => {

@@ -61,6 +61,22 @@ describe("mocking a function", () => {
 
 One of the major benefits from mocking return data is that your tests will take much less time to run compared to if they had to reach outside themselves and get the data on their own. It makes them much less brittle as well, since you don't have to worry about the external data source not working, or changing how the return data is shaped.
 
+More commonly in web-apps you'll have to mock some of the common browser functionality, and your imported libraries. Say for instance if you call `window.alert()`, or use `Router` or `NProgress` as imports. All you have to do in your tests, is mock those functions:
+
+```js
+global.alert = jest.fn()
+Router.router = {
+  push: jest.fn(),
+}
+NProgress.start = jest.fn()
+
+// In the tests...
+
+expect(alert).toHaveBeenCalled()
+expect(Router.router.push).toHaveBeenCalledWith({pathname: '/home'})
+expect(NProgress.start).toHaveBeenCalledTimes(3)
+```
+
 ## React Testing Concepts
 
 There are a few concepts in testing that are unique to React (or more generally, frontend frameworks in JavaScript), and those will often involve transforming code to HTML. Here's a little explanation of what they are:
@@ -111,11 +127,173 @@ Now we can see the actual data output and compare it to what we'd expect in our 
 
 Snapshot testing is the basis for testing React Components, and its a concept built on _shallow rendering/mounting_ components. It's super simple, a snapshot test just renders the component (shallow or mount) and compares it to a _snapshot_ of the component it has saved in a separate file. All it does is scan both and make sure they are identical, and will point out to the test-runner any changes that have been made.
 
+In practice, it'll help to use the `toJSON` method from the _enzyme-to-json_ library, to make prettier component snapshots:
+```js
+import { shallow, mount } from "enzyme"
+import toJSON from "enzyme-to-json"
+
+import CartCount from "../components/CartCount"
+
+describe("<CartCount />", () => {
+  it("renders", () => {
+    shallow(<CartCount count={10} />)
+  })
+  it("matches the snapshot", () => {
+    const wrapper = shallow(<CartCount count={10} />)
+    expect(toJSON(wrapper)).toMatchSnapshot()
+  })
+  it("updates via props", () => {
+    const wrapper = mount(<CartCount count={50} />)
+    expect(toJSON(wrapper)).toMatchSnapshot()
+    wrapper.setProps({ count: 15 })
+    expect(toJSON(wrapper)).toMatchSnapshot()
+  })
+})
+```
+
 With snapshot testing, if you make a change to a component, it fails the test, so that means new features always fail. Still though, its super simple, jest lets you simple press `u` on the test runner, and the snapshots will update.
 
 A benefit of this is that you'll be able to track the snapshots using git, along with your regular components, meaning if someone changes a component, they can also change the snapshot tests. This will let reviewers see the logic change in the component, along with the visual change to the UI, all in one!
 
+
+## Simulating Events
+
+Quick little concept to understand about testing React Components; since you're making a web app, your users are obviously going to interact with it (i.e. clicking buttons, filling out inputs), so we need to test those. The way we do that in `enzyme` is by **simulating events**. This means that we find the exact element we want to test, and use the `.simulate` chained method to describe the event, and event object passed to the component:
+
+For example:
+```js
+const inputField = wrapper.find('input')
+inputField.simulate('change', {target: {value: 'This is the typing value', name: 'inputFieldName' }})
+```
+
+The above example takes the input field and simulates a typing event which passes `This is the typing value` into the component under that event object. In the component, make sure you have values passed for whatever the handler is, so if you use `e.target.name` or `e.target.value` they are specified in your custom event object.
+
 ## Mocking Apollo
 
-- Queries and Mutations
-- Simulating events
+In order to Mock Apollo we need to actually set up a `MockedProvider` which is a helpful HOC, provided with **react-apollo**. All it does is wrap components that would be wrapped by the real provider in the application in order to test them. You provide all the mocks for the queries made by the component and the `MockedProvider` will just send them down to the component. Check it out:
+
+```js
+import wait from 'waait'
+import { mount } from "enzyme"
+import { MockedProvider } from 'react-apollo/test-utils'
+import { CURRENT_USER_QUERY } from '../components/User'
+
+const fakeUser = fakeUser()
+const mocks = [
+  {
+    request: { query: CURRENT_USER_QUERY }
+    result: { data: { me: fakeUser} }
+  }
+]
+
+describe('<Component />', () => {
+  it('can query the provider', async () => {
+    const wrapper = mount(
+      <MockedProvider mocks={mocks}>
+        <Component />
+      </MockedProvider>
+    )
+    // This step is to get past the loading state
+    await wait()
+    wrapper.update()
+
+    const testComp = wrapper.find('Component').instance()
+    expect(testComp.makeCurrentUserQuery).toHaveBeenCalled()
+    expect(testComp.state.user).toMatchObject(fakeUser)
+  })
+})
+```
+
+All we do is specify what we'd like the return data to send back to the component and the `MockedProvider` takes care of the rest!
+
+**NOTE:** As of now, there really isn't a good way to go about testing the _clientState_ frontend resolvers. These are the ones that we actually write into the ApolloClient declaration. See below:
+
+```js
+function createClient({ headers }) {
+  return new ApolloClient({
+    uri: SERVER_ENDPOINT,
+    request: operation => operation.setContext({
+      fetchOptions: {credentials: "include"}, 
+      headers
+    })
+  },
+  // local data
+  clientState: {
+    resolvers: {
+      Query: {
+        // Any resolvers in here cannot be tested nicely
+      },
+      Mutation: {
+        // Any resolvers in here cannot be tested nicely
+      }
+    },
+  }
+}
+```
+
+## Apollo Consumer
+
+When you're testing to see if your operations actually had an affect on your application, you should be using the `ApolloConsumer` API. What you're really doing is seeing if the **client before the operation is equal to the client after**. With the `ApolloConsumer`, you can take the returned client above where it's mounted and see if it's changed after simulating some functionality:
+
+```js
+it('adds an item to cart when clicked', async () => {
+  let apolloClient
+  const wrapper = mount(
+    <MockedProvider mocks={mocks}>
+      <ApolloConsumer>
+        {client => {
+          apolloClient = client
+          return <AddToCart id="abc123" />
+        }}
+      </ApolloConsumer>
+    </MockedProvider>,
+  )
+  await wait()
+  wrapper.update()
+})
+```
+
+With that, our test now has access to the **apolloClient** _outside_ of the render-props setup. To test if our operation has succeeded all we need to do is perform the query ourselves:
+
+```js
+// Get the initial state after loading
+const { data: beforeClick } = await apolloClient.query({ query: CURRENT_USER_QUERY })
+expect(beforeClick.cart).toHaveLength(0)
+
+// Simulate the mutation
+wrapper.find('button').simulate('click')
+await wait()
+
+// See if the state changes
+const { data: afterClick } = await apolloClient.query({ query: CURRENT_USER_QUERY })
+expect(afterClick.cart).toHaveLength(1)
+```
+
+There are two ways of setting these sorts of tests up to pass, and they're a little different since it depends how the component interacts with the **ApolloClient**. If the component being tested has an **Optimistic UI** or an **Updater Function** (_See  5 - Persisting Client Side Data: Optimistic Response/UI_), then it'll work by default without having to do any more mocks, since you're manually changing the cached data.
+
+If not, you'll have to create a second mock which contains what the data should look like after refetching the query from the database:
+
+```js
+const mocks = [
+  // Before click mock
+  {
+    request: { query: CURRENT_USER_QUERY },
+    result: {data: { ...fakeUser(), cart: [], }, },
+  },
+  // Clicking mutation mock
+  {
+    request: {
+      query: ADD_TO_CART_MUTATION,
+      variables: { id: 'abc123', },
+    },
+    result: {
+      data: { addToCart: { ...fakeCartItem(), quantity: 1, }, },
+    },
+  },
+  // After click mock
+  {
+    request: { query: CURRENT_USER_QUERY },
+    result: {data: { ...fakeUser(), cart: [fakeCartItem()], }, },
+  },
+]
+```
