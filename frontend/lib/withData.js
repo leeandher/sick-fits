@@ -2,7 +2,7 @@ import withApollo from 'next-with-apollo'
 // Apollo-boost contains the Apollo Client with a lot of pre-configured best practices
 // https://www.apollographql.com/docs/react/essentials/get-started/#apollo-boost
 import ApolloClient from 'apollo-boost'
-import { SERVER_ENDPOINT } from '../config'
+import { DEVELOPMENT_ENDPOINT, PRODUCTION_ENDPOINT } from '../config'
 import { LOCAL_STATE_QUERY } from '../components/Cart'
 
 function createClient({ headers }) {
