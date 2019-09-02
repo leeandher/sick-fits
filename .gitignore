@@ -10,4 +10,3 @@ haters/
 
 # Backend
 *.env
-prisma.graphql
