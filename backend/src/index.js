@@ -10,7 +10,6 @@ const server = createServer()
 
 // Use a library to convert the cookie from an ugly string to an object!
 server.express.use(cookieParser())
-// TODO: Use express middleware to populate current user
 
 // Decode the JWT so that we can get the User ID on each request
 server.express.use((req, res, next) => {
@@ -27,7 +26,7 @@ server.express.use(async (req, res, next) => {
   if (!req.userId) return next()
   const user = await db.query.user(
     { where: { id: req.userId } },
-    `{ id, permissions, email, name }`
+    `{ id, permissions, email, name }`,
   )
   req.user = user
   next()
@@ -38,11 +37,11 @@ server.start(
   {
     cors: {
       credentials: true,
-      origin: process.env.FRONTEND_URL
+      origin: process.env.FRONTEND_URL,
     },
-    port: process.env.PORT
+    port: process.env.PORT,
   },
   ({ port }) => {
     console.log(`\n Server is now running at: \nhttp://localhost:${port}`)
-  }
+  },
 )

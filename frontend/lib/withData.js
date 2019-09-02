@@ -1,23 +1,23 @@
-import withApollo from "next-with-apollo"
+import withApollo from 'next-with-apollo'
 // Apollo-boost contains the Apollo Client with a lot of pre-configured best practices
 // https://www.apollographql.com/docs/react/essentials/get-started/#apollo-boost
-import ApolloClient from "apollo-boost"
-import { SERVER_ENDPOINT } from "../config"
-import { LOCAL_STATE_QUERY } from "../components/Cart"
+import ApolloClient from 'apollo-boost'
+import { SERVER_ENDPOINT } from '../config'
+import { LOCAL_STATE_QUERY } from '../components/Cart'
 
 function createClient({ headers }) {
   return new ApolloClient({
     uri:
-      process.env.NODE_ENV === "development"
-        ? SERVER_ENDPOINT
-        : SERVER_ENDPOINT,
+      process.env.NODE_ENV === 'development'
+        ? DEVELOPMENT_ENDPOINT
+        : PRODUCTION_ENDPOINT,
     request: operation => {
       operation.setContext({
         fetchOptions: {
           // Cookies are included in requests, so we know if the user is logged in
-          credentials: "include"
+          credentials: 'include',
         },
-        headers
+        headers,
       })
     },
     // local data
@@ -31,13 +31,13 @@ function createClient({ headers }) {
             const newData = { data: { cartOpen: !cartOpen } }
             cache.writeData(newData)
             return newData
-          }
-        }
+          },
+        },
       },
       defaults: {
-        cartOpen: false
-      }
-    }
+        cartOpen: false,
+      },
+    },
   })
 }
 
