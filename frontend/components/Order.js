@@ -1,12 +1,12 @@
-import React, { Component } from "react"
-import PropTypes from "prop-types"
-import gql from "graphql-tag"
-import { Query } from "react-apollo"
-import { format } from "date-fns"
-import Head from "next/head"
-import formatMoney from "../lib/formatMoney"
-import ErrorMessage from "./ErrorMessage"
-import OrderStyles from "./styles/OrderStyles"
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import gql from 'graphql-tag'
+import { Query } from 'react-apollo'
+import { format } from 'date-fns'
+import Head from 'next/head'
+import formatMoney from '../lib/formatMoney'
+import ErrorMessage from './ErrorMessage'
+import OrderStyles from './styles/OrderStyles'
 
 const SINGLE_ORDER_QUERY = gql`
   query SINGLE_ORDER_QUERY($id: ID!) {
@@ -32,7 +32,7 @@ const SINGLE_ORDER_QUERY = gql`
 
 class Order extends Component {
   static propTypes = {
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }
   render() {
     const { id } = this.props
@@ -42,7 +42,7 @@ class Order extends Component {
           if (loading) return <p>⚡ Loading... ⚡</p>
           if (error) return <ErrorMessage error={error} />
           return (
-            <OrderStyles>
+            <OrderStyles data-test="order">
               <Head>
                 <title>Sick Fits - Order {order.id}</title>
               </Head>
@@ -56,7 +56,7 @@ class Order extends Component {
               </p>
               <p>
                 <span>Date:</span>
-                <span>{format(order.createdAt, "MMMM d, YYY h:mm a")}</span>
+                <span>{format(order.createdAt, 'MMMM d, YYY h:mm a')}</span>
               </p>
               <p>
                 <span>Total:</span>
@@ -65,11 +65,11 @@ class Order extends Component {
               <p>
                 <span>Items:</span>
                 <span>
-                  {order.items.length} unique,{" "}
+                  {order.items.length} unique,{' '}
                   {order.items.reduce(
                     (total, item) => item.quantity + total,
-                    0
-                  )}{" "}
+                    0,
+                  )}{' '}
                   total
                 </span>
               </p>
