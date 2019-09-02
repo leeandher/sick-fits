@@ -1,10 +1,10 @@
-import React, { Component } from "react"
-import { Mutation } from "react-apollo"
-import gql from "graphql-tag"
-import PropTypes from "prop-types"
-import styled from "styled-components"
+import React, { Component } from 'react'
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
 
-import { CURRENT_USER_QUERY } from "./User"
+import { CURRENT_USER_QUERY } from './User'
 
 const REMOVE_FROM_CART_MUTATION = gql`
   mutation REMOVE_FROM_CART_MUTATION($id: ID!) {
@@ -25,7 +25,7 @@ const BigButton = styled.button`
 
 class RemoveFromCart extends Component {
   static propTypes = {
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }
   // This gets called as soon as a response comes back from the server
   // (after the mutation has been performed)
@@ -47,11 +47,11 @@ class RemoveFromCart extends Component {
         variables={{ id }}
         update={this.update}
         optimisticResponse={{
-          __typename: "Mutation",
+          __typename: 'Mutation',
           removeFromCart: {
-            __typename: "CartItem",
-            id
-          }
+            __typename: 'CartItem',
+            id,
+          },
         }}
       >
         {(removeFromCart, { loading }) => (
@@ -71,3 +71,4 @@ class RemoveFromCart extends Component {
 }
 
 export default RemoveFromCart
+export { REMOVE_FROM_CART_MUTATION }
