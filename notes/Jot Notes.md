@@ -83,3 +83,23 @@ const SingleItem = ({ item }) => (
 )
 // ...
 ```
+
+## Testing Tips
+
+If you are testing frontend components, a useful tip is to tag elements you'll need to test with a data-attribute, like `data-test`. That way, when you use a query selector in the test, you can fetch that element that much easier, and it's helpful to see what elements are being tested:
+```js
+// Form.js
+const Form = (props) => (
+  <StyledContainer>
+    <div data-test="form-wrapper" {...props}>
+      <form>{...}</form>
+    </div>
+  </StyledContainer>
+)
+```
+```js
+// Form.test.js
+const wrapper = mount(<Form />)
+const formWrapper = wrapper.find('div[data-test="form-wrapper"]')
+// Test the formWrapper element...
+```

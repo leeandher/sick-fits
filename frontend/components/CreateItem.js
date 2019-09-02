@@ -8,7 +8,7 @@ import ErrorMessage from './ErrorMessage'
 
 import { IMAGE_ENDPOINT } from '../config'
 
-export const CREATE_ITEM_MUTATION = gql`
+const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
     $title: String!
     $description: String!
@@ -35,7 +35,7 @@ class CreateItem extends Component {
     image: '',
     largeImage: '',
     price: 0,
-    uploading: false
+    uploading: false,
   }
 
   handleChange = ({ target: { name, type, value } }) => {
@@ -52,22 +52,37 @@ class CreateItem extends Component {
     await this.setState({ uploading: true })
     const res = await fetch(IMAGE_ENDPOINT, {
       method: 'POST',
-      body: data
+      body: data,
     })
     const upload = await res.json()
+    if (upload.error) {
+      window.alert(upload.error.message)
+      return this.setState({ uploading: false })
+    }
     this.setState({
       image: upload.secure_url,
       largeImage: upload.eager[0].secure_url,
-      uploading: false
+      uploading: false,
     })
   }
 
   render() {
-    const { description, image, price, title, uploading } = this.state
+    const {
+      description,
+      image,
+      largeImage,
+      price,
+      title,
+      uploading,
+    } = this.state
     return (
-      <Mutation mutation={CREATE_ITEM_MUTATION} variables={this.state}>
+      <Mutation
+        mutation={CREATE_ITEM_MUTATION}
+        variables={{ description, image, price, title, largeImage }}
+      >
         {(createItem, { loading, error }) => (
           <Form
+            data-test="create"
             onSubmit={async e => {
               e.preventDefault()
               if (uploading) return false
@@ -76,7 +91,7 @@ class CreateItem extends Component {
               // Send them to the single item page
               Router.push({
                 pathname: '/item',
-                query: { id: data.createItem.id }
+                query: { id: data.createItem.id },
               })
             }}
           >
@@ -101,7 +116,7 @@ class CreateItem extends Component {
                     style={{
                       maxWidth: '300px',
                       maxHeight: '200px',
-                      padding: '1rem'
+                      padding: '1rem',
                     }}
                   />
                 )}
@@ -153,3 +168,4 @@ class CreateItem extends Component {
 }
 
 export default CreateItem
+export { CREATE_ITEM_MUTATION }

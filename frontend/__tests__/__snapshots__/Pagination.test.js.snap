@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Pagination /> renders correct pagination for 10 items 1`] = `
+<div
+  className="PaginationStyles-aduuar-0 ewJsCc"
+  data-test="pagination"
+>
+  <SideEffect(Head)>
+    <Head />
+  </SideEffect(Head)>
+  <Link
+    href={
+      Object {
+        "pathname": "items",
+        "query": Object {
+          "page": 0,
+        },
+      }
+    }
+    prefetch={true}
+  >
+    <Pagination__StylishAnchor
+      aria-disabled={true}
+      className="prev"
+      onClick={[Function]}
+    >
+      <a
+        aria-disabled={true}
+        className="prev Pagination__StylishAnchor-w8etnd-0 lkQVXm"
+        onClick={[Function]}
+      >
+        ← Prev
+      </a>
+    </Pagination__StylishAnchor>
+  </Link>
+  <p>
+    Page 
+    1
+     of 
+    3
+  </p>
+  <p>
+    10
+     Items Total
+  </p>
+  <Link
+    href={
+      Object {
+        "pathname": "items",
+        "query": Object {
+          "page": 2,
+        },
+      }
+    }
+    prefetch={true}
+  >
+    <Pagination__StylishAnchor
+      aria-disabled={false}
+      className="next"
+      onClick={[Function]}
+    >
+      <a
+        aria-disabled={false}
+        className="next Pagination__StylishAnchor-w8etnd-0 lkQVXm"
+        onClick={[Function]}
+      >
+        Next →
+      </a>
+    </Pagination__StylishAnchor>
+  </Link>
+</div>
+`;

@@ -16,7 +16,7 @@ const RESET_REQUEST_MUTATION = gql`
 class RequestReset extends Component {
   state = {
     email: '',
-    message: ''
+    message: '',
   }
   saveToState = e => {
     const { value, name } = e.target
@@ -29,13 +29,14 @@ class RequestReset extends Component {
         {(requestReset, { error, loading, called }) => {
           return (
             <Form
+              data-test="form"
               method="post"
               onSubmit={async e => {
                 e.preventDefault()
                 const { data } = await requestReset()
                 this.setState({
                   email: '',
-                  message: data.requestReset.message
+                  message: data.requestReset.message,
                 })
               }}
             >

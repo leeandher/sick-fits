@@ -26,15 +26,15 @@ export default class Item extends Component {
           <Link href={{ pathname: "item", query: { id: id } }}>
             <a>{title}</a>
           </Link>
-          <p>{description}</p>
-          <div className="buttonList">
-            <Link href={{ pathname: "update", query: { id: id } }}>
-              <button>🔨 Edit 🔨</button>
-            </Link>
-            <AddToCart id={item.id}>Add to 🛒</AddToCart>
-            <DeleteItem id={item.id}>🔥 Delete Item 🔥</DeleteItem>
-          </div>
         </Title>
+        <p>{description}</p>
+        <div className="buttonList">
+          <Link href={{ pathname: "update", query: { id: id } }}>
+            <button>🔨 Edit 🔨</button>
+          </Link>
+          <AddToCart id={item.id} />
+          <DeleteItem id={item.id}>🔥 Delete Item 🔥</DeleteItem>
+        </div>
       </ItemStyles>
     )
   }

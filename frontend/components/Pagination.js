@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 import { Query } from 'react-apollo'
 import Head from 'next/head'
 import Link from 'next/link'
+import styled from 'styled-components'
 
 import PaginationStyles from './styles/PaginationStyles'
 
@@ -18,6 +19,10 @@ const PAGINATION_QUERY = gql`
   }
 `
 
+const StylishAnchor = styled.a`
+  color: ${({ theme }) => theme.black};
+`
+
 const Pagination = ({ page }) => (
   <Query query={PAGINATION_QUERY}>
     {({ data, error, loading }) => {
@@ -26,7 +31,7 @@ const Pagination = ({ page }) => (
       const { count } = data.itemsConnection.aggregate
       const pages = Math.ceil(count / PER_PAGE)
       return (
-        <PaginationStyles>
+        <PaginationStyles data-test="pagination">
           <Head>
             <title>
               Sick Fits | Page {page} of {pages}
@@ -39,9 +44,9 @@ const Pagination = ({ page }) => (
               query: { page: page - 1 }
             }}
           >
-            <a className="prev" aria-disabled={page <= 1}>
+            <StylishAnchor className="prev" aria-disabled={page <= 1}>
               ← Prev
-            </a>
+            </StylishAnchor>
           </Link>
           <p>
             Page {page} of {pages}
@@ -54,9 +59,9 @@ const Pagination = ({ page }) => (
               query: { page: page + 1 }
             }}
           >
-            <a className="next" aria-disabled={page >= pages}>
+            <StylishAnchor className="next" aria-disabled={page >= pages}>
               Next →
-            </a>
+            </StylishAnchor>
           </Link>
         </PaginationStyles>
       )
@@ -65,3 +70,4 @@ const Pagination = ({ page }) => (
 )
 
 export default Pagination
+export { PAGINATION_QUERY }

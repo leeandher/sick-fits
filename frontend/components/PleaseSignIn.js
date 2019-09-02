@@ -1,6 +1,6 @@
 import { Query } from 'react-apollo'
 import { CURRENT_USER_QUERY } from './User'
-import SignIn from './/SignIn'
+import SignIn from './SignIn'
 
 const PleaseSignIn = ({ children }) => (
   <Query query={CURRENT_USER_QUERY}>

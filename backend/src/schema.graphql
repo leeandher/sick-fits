@@ -44,7 +44,9 @@ type Mutation {
     confirmPassword: String!
   ): User!
   addToCart(id: ID!): CartItem
+  removeFromCart(id: ID!): CartItem
   updatePermissions(permissions: [Permission], userId: ID!): User
+  createOrder(token: String!): Order!
 }
 
 type Query {
@@ -58,4 +60,6 @@ type Query {
   itemsConnection(where: ItemWhereInput): ItemConnection!
   users: [User!]!
   me: User
+  orders(orderBy: OrderOrderByInput): [Order!]!
+  order(where: OrderWhereUniqueInput!): Order
 }
