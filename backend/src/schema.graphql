@@ -4,6 +4,7 @@ type SuccessMessage {
   message: String
 }
 
+# Overrides the datamodel
 type User {
   id: ID!
   name: String!
@@ -11,6 +12,7 @@ type User {
   cart: [CartItem!]!
   permissions: [Permission!]!
   orders: [OrderItem]
+  createdAt: DateTime!
 }
 
 type Mutation {

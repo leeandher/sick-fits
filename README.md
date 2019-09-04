@@ -4,6 +4,4 @@ This course covers every part of building modern full-stack web applications wit
 
 ## TODOs
 
-- create a profile page for users
-- fix the orders page on deploy
 - fix mailing
