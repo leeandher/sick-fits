@@ -50,11 +50,11 @@ class UpdateItem extends Component {
   handleSubmit = async (e, updateItem) => {
     const { id } = this.props
     e.preventDefault()
-    const { data } = await updateItem({
+    await updateItem({
       variables: {
         id,
-        ...this.atate
-      }
+        ...this.state,
+      },
     })
   }
 
@@ -71,12 +71,9 @@ class UpdateItem extends Component {
                 <Form
                   onSubmit={async e => {
                     e.preventDefault()
-                    // Call the mutation
-                    const { data } = await createItem()
-                    // Send them to the single item page
                     Router.push({
                       pathname: '/item',
-                      query: { id: data.createItem.id }
+                      query: { id },
                     })
                   }}
                   onSubmit={e => this.handleSubmit(e, updateItem)}
@@ -117,7 +114,7 @@ class UpdateItem extends Component {
                         placeholder="Enter a Description"
                         defaultValue={item.description}
                         onChange={this.handleChange}
-                        style={{ boxShadow: 'none' }}
+                        style={{ boxShadow: 'none', resize: 'vertical' }}
                         required
                       />
                     </label>

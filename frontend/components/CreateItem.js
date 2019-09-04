@@ -154,8 +154,7 @@ class CreateItem extends Component {
                   placeholder="Enter a Description"
                   value={description}
                   onChange={this.handleChange}
-                  style={{ boxShadow: 'none' }}
-                  required
+                  style={{ boxShadow: 'none', resize: 'vertical' }}
                 />
               </label>
               <button type="submit">Submit</button>

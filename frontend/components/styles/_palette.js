@@ -6,5 +6,5 @@ export default {
   offWhite: '#ededed',
   maxWidth: '1000px',
   bs: '0 12px 24px',
-  bp: '1300px'
+  bp: '1300px',
 }

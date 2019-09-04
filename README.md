@@ -4,8 +4,6 @@ This course covers every part of building modern full-stack web applications wit
 
 ## TODOs
 
-- remove the buttons at the bottom of the items if the user isn't signed in
 - create a profile page for users
 - fix the orders page on deploy
-- add description from here
-- add the add to cart button to the item page
+- fix mailing

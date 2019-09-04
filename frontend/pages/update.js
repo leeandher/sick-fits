@@ -4,7 +4,6 @@ import UpdateItem from '../components/UpdateItem'
 
 const UpdatePage = ({ query }) => (
   <div>
-    <p>Update!</p>
     <UpdateItem id={query.id} />
   </div>
 )

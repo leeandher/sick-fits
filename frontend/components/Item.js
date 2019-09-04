@@ -7,6 +7,7 @@ import ItemStyles from './styles/ItemStyles'
 import PriceTag from './styles/PriceTag'
 import DeleteItem from './DeleteItem'
 import AddToCart from './AddToCart'
+import User from './User'
 
 import formatMoney from '../lib/formatMoney'
 
@@ -31,13 +32,20 @@ export default class Item extends Component {
           </Link>
         </Title>
         <p>{description}</p>
-        <div className="buttonList">
-          <Link href={{ pathname: 'update', query: { id: id } }}>
-            <button>🔨 Edit 🔨</button>
-          </Link>
-          <AddToCart id={item.id} />
-          <DeleteItem id={item.id}>🔥 Delete Item 🔥</DeleteItem>
-        </div>
+        <User>
+          {({ data: { me } }) => {
+            if (!me) return null
+            return (
+              <div className="buttonList">
+                <Link href={{ pathname: 'update', query: { id: id } }}>
+                  <button>🔨 Edit 🔨</button>
+                </Link>
+                <AddToCart id={item.id} />
+                <DeleteItem id={item.id}>🔥 Delete Item 🔥</DeleteItem>
+              </div>
+            )
+          }}
+        </User>
       </ItemStyles>
     )
   }

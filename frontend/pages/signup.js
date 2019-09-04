@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import SignUp from '../components/SignUp'
 import SignIn from '../components/SignIn'
 import RequestReset from '../components/RequestReset'
+import DemoSignupMessage from '../components/DemoSignupMessage'
 
 const Columns = styled.div`
   display: grid;
@@ -12,11 +13,14 @@ const Columns = styled.div`
 `
 
 const SignUpPage = props => (
-  <Columns>
-    <SignUp />
-    <SignIn />
-    <RequestReset />
-  </Columns>
+  <>
+    <DemoSignupMessage />
+    <Columns>
+      <SignUp />
+      <SignIn />
+      <RequestReset />
+    </Columns>
+  </>
 )
 
 export default SignUpPage

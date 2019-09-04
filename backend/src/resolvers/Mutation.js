@@ -30,7 +30,16 @@ const Mutation = {
   },
 
   async updateItem(parent, { id, ...args }, ctx, info) {
+    // 1. Ensure they're logged in
     if (!ctx.request.userId) throw new Error('🙅‍♀️ You must be logged in! 🙅‍♂️')
+    // 2. Ensure they own the item
+    const where = { id }
+    const item = await ctx.db.query.item({ where }, `{ id title user { id } }`)
+    const ownsItem = item.user.id === ctx.request.userId
+    if (!ownsItem) {
+      throw new Error("🙅‍♀️ You don't own this item, Sorry! 🙅‍♂️")
+    }
+    // 3. Update the item
     return ctx.db.mutation.updateItem(
       { where: { id }, data: { ...args } },
       info,
@@ -66,7 +75,7 @@ const Mutation = {
           email,
           password,
           permissions: {
-            set: ['USER', 'ADMIN'],
+            set: ['USER'],
           },
         },
       },
