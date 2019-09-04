@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 import styled from 'styled-components'
+import Link from 'next/link'
 
 import Item from './Item'
 import Pagination from './Pagination'
@@ -36,6 +37,20 @@ const ItemsList = styled.div`
   margin: 0 auto;
 `
 
+const MainWrap = styled.div`
+  h2 {
+    text-align: center;
+    span {
+      padding: 1rem;
+      background: ${({ theme }) => theme.red};
+      color: white;
+      line-height: 1;
+      transform: skew(-6deg);
+      display: inline-block;
+    }
+  }
+`
+
 class Items extends Component {
   render() {
     const { page } = this.props
@@ -46,18 +61,31 @@ class Items extends Component {
           query={ALL_ITEMS_QUERY}
           variables={{
             skip: (page - 1) * PER_PAGE,
-            first: PER_PAGE
+            first: PER_PAGE,
           }}
         >
           {({ data, error, loading }) => {
             if (loading) return <p>⚡ Loading... ⚡</p>
             if (error) return <p>❌ Error ❌: {error.message}</p>
             return (
-              <ItemsList>
-                {data.items.map(item => (
-                  <Item key={item.id} item={item} />
-                ))}
-              </ItemsList>
+              <MainWrap>
+                {data.items.length === 0 && (
+                  <h2>
+                    There aren't any items in the shop right now!
+                    <br />
+                    <Link href="/sell">
+                      <a>
+                        <span>Selling something?</span>
+                      </a>
+                    </Link>
+                  </h2>
+                )}
+                <ItemsList>
+                  {data.items.map(item => (
+                    <Item key={item.id} item={item} />
+                  ))}
+                </ItemsList>
+              </MainWrap>
             )
           }}
         </Query>

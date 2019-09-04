@@ -21,6 +21,7 @@ const PAGINATION_QUERY = gql`
 
 const StylishAnchor = styled.a`
   color: ${({ theme }) => theme.black};
+  cursor: pointer;
 `
 
 const Pagination = ({ page }) => (
@@ -30,6 +31,7 @@ const Pagination = ({ page }) => (
       if (error) return <p>❌ Error ❌: {error.message}</p>
       const { count } = data.itemsConnection.aggregate
       const pages = Math.ceil(count / PER_PAGE)
+      if (count === 0) return null
       return (
         <PaginationStyles data-test="pagination">
           <Head>
@@ -41,7 +43,7 @@ const Pagination = ({ page }) => (
             prefetch
             href={{
               pathname: 'items',
-              query: { page: page - 1 }
+              query: { page: page - 1 },
             }}
           >
             <StylishAnchor className="prev" aria-disabled={page <= 1}>
@@ -56,7 +58,7 @@ const Pagination = ({ page }) => (
             prefetch
             href={{
               pathname: 'items',
-              query: { page: page + 1 }
+              query: { page: page + 1 },
             }}
           >
             <StylishAnchor className="next" aria-disabled={page >= pages}>
