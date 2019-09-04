@@ -26,7 +26,7 @@ exports[`<Pagination /> renders correct pagination for 10 items 1`] = `
     >
       <a
         aria-disabled={true}
-        className="prev Pagination__StylishAnchor-w8etnd-0 lkQVXm"
+        className="prev Pagination__StylishAnchor-w8etnd-0 cWUbgn"
         onClick={[Function]}
       >
         ← Prev
@@ -61,7 +61,7 @@ exports[`<Pagination /> renders correct pagination for 10 items 1`] = `
     >
       <a
         aria-disabled={false}
-        className="next Pagination__StylishAnchor-w8etnd-0 lkQVXm"
+        className="next Pagination__StylishAnchor-w8etnd-0 cWUbgn"
         onClick={[Function]}
       >
         Next →

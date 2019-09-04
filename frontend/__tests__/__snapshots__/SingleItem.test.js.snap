@@ -25,8 +25,17 @@ exports[`<SingleItem /> renders with proper data 2`] = `
 `;
 
 exports[`<SingleItem /> renders with proper data 3`] = `
-<p>
-   
-  dogs
-</p>
+Array [
+  <p>
+     
+    dogs
+  </p>,
+  <p
+    className="stylish big"
+  >
+    <span>
+      $50
+    </span>
+  </p>,
+]
 `;

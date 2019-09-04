@@ -5,10 +5,23 @@ exports[`<Item /> matches the snapshot 1`] = `
   <PriceTag>
     $40
   </PriceTag>
-  <img
-    alt="Sick Item"
-    src="sick.jpg"
-  />
+  <Link
+    href={
+      Object {
+        "pathname": "item",
+        "query": Object {
+          "id": "ABC123",
+        },
+      }
+    }
+  >
+    <a>
+      <img
+        alt="Sick Item"
+        src="sick.jpg"
+      />
+    </a>
+  </Link>
   <Title>
     <Link
       href={
@@ -28,31 +41,8 @@ exports[`<Item /> matches the snapshot 1`] = `
   <p>
     A super sick item for super sick people!
   </p>
-  <div
-    className="buttonList"
-  >
-    <Link
-      href={
-        Object {
-          "pathname": "update",
-          "query": Object {
-            "id": "ABC123",
-          },
-        }
-      }
-    >
-      <button>
-        🔨 Edit 🔨
-      </button>
-    </Link>
-    <AddToCart
-      id="ABC123"
-    />
-    <DeleteItem
-      id="ABC123"
-    >
-      🔥 Delete Item 🔥
-    </DeleteItem>
-  </div>
+  <User>
+    <Component />
+  </User>
 </ItemStyles__Item>
 `;

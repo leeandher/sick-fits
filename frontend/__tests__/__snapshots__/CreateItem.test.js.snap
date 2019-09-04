@@ -63,10 +63,10 @@ exports[`<CreateItem /> renders and matches snapshot 1`] = `
         name="description"
         onChange={[Function]}
         placeholder="Enter a Description"
-        required={true}
         style={
           Object {
             "boxShadow": "none",
+            "resize": "vertical",
           }
         }
         value=""
