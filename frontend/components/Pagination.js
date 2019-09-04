@@ -27,7 +27,7 @@ const StylishAnchor = styled.a`
 const Pagination = ({ page }) => (
   <Query query={PAGINATION_QUERY}>
     {({ data, error, loading }) => {
-      if (loading) return <p>⚡ Loading... ⚡</p>
+      if (loading) return null
       if (error) return <p>❌ Error ❌: {error.message}</p>
       const { count } = data.itemsConnection.aggregate
       const pages = Math.ceil(count / PER_PAGE)

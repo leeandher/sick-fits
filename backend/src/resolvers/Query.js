@@ -16,6 +16,16 @@ const Query = {
   items: forwardTo('db'),
   item: forwardTo('db'),
   itemsConnection: forwardTo('db'),
+  permissions() {
+    return [
+      'ADMIN',
+      'USER',
+      'ITEMCREATE',
+      'ITEMUPDATE',
+      'ITEMDELETE',
+      'PERMISSIONUPDATE',
+    ]
+  },
   async users(parent, args, ctx, info) {
     // 1. Check if they are logged in
     if (!ctx.request.userId) throw new Error('🙅‍♀️ You must be logged in! 🙅‍♂️')

@@ -35,7 +35,7 @@ const Nav = () => (
                     count={me.cart.reduce(
                       (total, { quantity, item }) =>
                         !item ? total : total + quantity,
-                      0
+                      0,
                     )}
                   />
                 </button>

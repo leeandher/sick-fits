@@ -11,7 +11,7 @@ type User {
   email: String!
   cart: [CartItem!]!
   permissions: [Permission!]!
-  orders: [OrderItem]
+  orders: [Order!]!
   createdAt: DateTime!
 }
 
@@ -65,4 +65,5 @@ type Query {
   me: User
   orders(orderBy: OrderOrderByInput): [Order!]!
   order(where: OrderWhereUniqueInput!): Order
+  permissions: [String!]!
 }

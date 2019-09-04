@@ -14,12 +14,7 @@ const ALL_USERS_AND_PERMISSIONS_QUERY = gql`
       email
       permissions
     }
-    __type(name: "Permission") {
-      name
-      enumValues {
-        name
-      }
-    }
+    permissions
   }
 `
 
@@ -40,7 +35,7 @@ const UPDATE_PERMISSIONS_MUTATION = gql`
 const Permissions = () => (
   <Query query={ALL_USERS_AND_PERMISSIONS_QUERY}>
     {({ data, loading, error }) => {
-      const allPermissions = data.__type.enumValues.map(({ name }) => name)
+      const allPermissions = data.permissions
       return (
         <>
           <ErrorMessage error={error} />
@@ -80,12 +75,12 @@ class UserPermissions extends React.Component {
       name: PropTypes.string,
       email: PropTypes.string,
       id: PropTypes.string,
-      permissions: PropTypes.array
-    }).isRequired
+      permissions: PropTypes.array,
+    }).isRequired,
   }
 
   state = {
-    permissions: this.props.user.permissions
+    permissions: this.props.user.permissions,
   }
 
   handlePermissionChange = ({ target }, mutationFunction) => {
@@ -97,7 +92,7 @@ class UserPermissions extends React.Component {
     if (checked) updatedPermissions.push(value)
     else {
       updatedPermissions = updatedPermissions.filter(
-        permission => permission !== value
+        permission => permission !== value,
       )
     }
     // 3. Update the state, run mutation as callback
@@ -113,7 +108,7 @@ class UserPermissions extends React.Component {
         mutation={UPDATE_PERMISSIONS_MUTATION}
         variables={{
           userId: user.id,
-          permissions
+          permissions,
         }}
       >
         {(updatePermissions, { error, loading }) => {
