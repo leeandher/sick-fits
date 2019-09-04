@@ -33,11 +33,7 @@ const Query = {
     const { userId, user } = ctx.request
     // 1. Check if they are logged in
     if (!userId) throw new Error('🙅‍♀️ You must be logged in! 🙅‍♂️')
-    // 2. Check if they are permitted
-    // if (!user.permissions.includes("ADMIN")) {
-    //   throw new Error("❌ Sorry, you don't have the proper permissions ❌")
-    // }
-    // 3. Query their orders
+    // 2. Query their orders
     return ctx.db.query.orders(
       { where: { user: { id: userId } }, orderBy },
       info,
@@ -56,18 +52,13 @@ const Query = {
     if (!userId) throw new Error('🙅‍♀️ You must be logged in! 🙅‍♂️')
     // 2. Check if the user made the order
     const order = await ctx.db.query.order({ where: { id } }, `{ user { id } }`)
-    // 3. Check if the user can see the order
     const isOrderUser = userId === order.user.id
     if (!isOrderUser) {
       throw new Error(
         '❌ Sorry, but this order was not made by your account! ❌',
       )
     }
-    const isPermitted = user.permissions.includes('ADMIN')
-    if (!isPermitted) {
-      throw new Error("❌ Sorry, you don't have the proper permissions ❌")
-    }
-    // 4. Return the order
+    // 3. Return the order
     return ctx.db.query.order({ where: { id } }, info)
   },
 }

@@ -1,13 +1,13 @@
-import React, { Component } from "react"
-import gql from "graphql-tag"
-import styled from "styled-components"
-import { Query } from "react-apollo"
-import { formatDistance } from "date-fns"
-import formatMoney from "../lib/formatMoney"
-import Head from "next/head"
-import Link from "next/link"
-import OrderItemStyles from "./styles/OrderItemStyles"
-import ErrorMessage from "./ErrorMessage"
+import React, { Component } from 'react'
+import gql from 'graphql-tag'
+import styled from 'styled-components'
+import { Query } from 'react-apollo'
+import { formatDistance } from 'date-fns'
+import formatMoney from '../lib/formatMoney'
+import Head from 'next/head'
+import Link from 'next/link'
+import OrderItemStyles from './styles/OrderItemStyles'
+import ErrorMessage from './ErrorMessage'
 
 const USER_ORDERS_QUERY = gql`
   query USER_ORDERS_QUERY {
@@ -64,7 +64,7 @@ class OrderList extends Component {
                 {orders.map(order => (
                   <OrderItemStyles key={order.id}>
                     <Link
-                      href={{ pathname: "order", query: { id: order.id } }}
+                      href={{ pathname: 'order', query: { id: order.id } }}
                       key={order.id}
                     >
                       <a>
@@ -72,12 +72,17 @@ class OrderList extends Component {
                           <p>
                             {order.items.reduce(
                               (total, item) => total + item.quantity,
-                              0
-                            )}{" "}
+                              0,
+                            )}{' '}
                             Items
                           </p>
                           <p>{order.items.length} Products</p>
-                          <p>{formatDistance(order.createdAt, new Date())}</p>
+                          <p>
+                            {formatDistance(
+                              Date.parse(order.createdAt),
+                              new Date(),
+                            )}
+                          </p>
                           <p>{formatMoney(order.total)}</p>
                         </div>
                         <div className="images">

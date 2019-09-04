@@ -56,7 +56,9 @@ class Order extends Component {
               </p>
               <p>
                 <span>Date:</span>
-                <span>{format(order.createdAt, 'MMMM d, YYY h:mm a')}</span>
+                <span>
+                  {format(Date.parse(order.createdAt), 'MMMM d, YYY h:mm a')}
+                </span>
               </p>
               <p>
                 <span>Total:</span>
