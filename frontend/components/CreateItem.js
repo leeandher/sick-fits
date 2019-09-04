@@ -128,6 +128,7 @@ class CreateItem extends Component {
                   id="title"
                   name="title"
                   placeholder="Title"
+                  maxLength={100}
                   value={title}
                   onChange={this.handleChange}
                   required
@@ -140,6 +141,7 @@ class CreateItem extends Component {
                   id="price"
                   name="price"
                   min={0}
+                  max={1000000}
                   placeholder="Price"
                   value={price}
                   onChange={this.handleChange}
@@ -155,6 +157,8 @@ class CreateItem extends Component {
                   value={description}
                   onChange={this.handleChange}
                   style={{ boxShadow: 'none', resize: 'vertical' }}
+                  maxLength={400}
+                  required
                 />
               </label>
               <button type="submit">Submit</button>

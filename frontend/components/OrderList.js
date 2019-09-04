@@ -58,7 +58,8 @@ class OrderList extends Component {
                 <title>Sick Fits - Orders</title>
               </Head>
               <h2>
-                You have <span>{orders.length}</span> order{orders.length !== 1 && 's'}!
+                You have <span>{orders.length}</span> order
+                {orders.length !== 1 && 's'}!
               </h2>
               <ListWrap>
                 {orders.map(order => (

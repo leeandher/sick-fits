@@ -88,6 +88,7 @@ class UpdateItem extends Component {
                         id="title"
                         name="title"
                         placeholder="Title"
+                        maxLength={100}
                         defaultValue={item.title}
                         onChange={this.handleChange}
                         required
@@ -100,6 +101,7 @@ class UpdateItem extends Component {
                         id="price"
                         name="price"
                         min={0}
+                        max={1000000}
                         placeholder="Price"
                         defaultValue={item.price}
                         onChange={this.handleChange}
@@ -115,6 +117,7 @@ class UpdateItem extends Component {
                         defaultValue={item.description}
                         onChange={this.handleChange}
                         style={{ boxShadow: 'none', resize: 'vertical' }}
+                        maxLength={400}
                         required
                       />
                     </label>

@@ -35,6 +35,7 @@ const UPDATE_PERMISSIONS_MUTATION = gql`
 const Permissions = () => (
   <Query query={ALL_USERS_AND_PERMISSIONS_QUERY}>
     {({ data, loading, error }) => {
+      if (loading) return null
       const allPermissions = data.permissions
       return (
         <>
