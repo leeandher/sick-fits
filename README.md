@@ -1,7 +1,25 @@
-# Advanced React and GraphQL
+# Sick Fits
 
-This course covers every part of building modern full-stack web applications with React and GraphQL! How to build a GraphQL serer with _Prisma_, data models, schemas and resolvers, along with setting up _Next_ with Server-side Rendering, Routing, and so on, for a beautiful fast front-end. It even covers using _Apollo_ (for data management and caching), and implementing Stripe for building your own eCommerce platform!
+Sick Fits is a eCommerce website built on a super fresh framework of _Prisma_, _GraphQL-Yoga_, _React (Next)_, and _Apollo_, but even has some other buzzwords like _JWTs_, _Jest_, and _Enzyme_.
 
-## TODOs
+Totally functional, fluid animations, and a clean design, so feel free to peruse the site and pick something up to 👚 freshen up your wardrobe 👗.
 
-- fix mailing
+I don't think I need to say it, but this guy is just a demo running a Stripe Testing environment. You don't actually have to put your real credit card in, but you're welcome to try I guess 😂.
+
+## Using the app
+
+You've been to other online merchants haven't you?! Just browse around the multitude of clothes until you find something you fancy. After that, you should probably make an account so you can actually buy something.
+
+With an account set up, you'll have access to the bulk of the application, including the ability to sell your own products (and manage them), view your profile, add items to your cart, checkout/purchase those items, and review past orders as well! 
+
+## How it Works
+
+This app follows a very similar stack to the [Stacker News](https://leander.xyz/projects/stacker-news). It is built on a **Prisma** backend that's been deployed to Heroku, since they have an awesome integration set up. Another **GraphQL-Yoga** server sits on top of the backend, and acts as the proxy for the database manipulations, and also sits on Heroku!
+
+For the Frontend, it was built entirely in the _React_ framework **Next** for the quick loading, built-in SSR, and Router, but also uses **Apollo** for GraphQL/caching. I even managed to write a heck of a lot of tests for the frontend in **Jest** (for logic) and **Enzyme** (for testing, shallow rendering and mounting components)!
+
+For authentication between to the frontend and backend, **JWTs** were used in request **cookies** to ensure a secure connection! Credit card checkout is also handled completely through **Stripe**, that way I don't have to touch any credit card details in the app 😁😁.
+
+## Creds
+
+I was able to create this application through the help of a course, developed by [Wes Bos](https://wesbos.com) entitled [Advanced React and GraphQL](https://advancedreact.com). If you've stumbled upon this project, in attempt to learn react, I highly recommend his courses and wish you the best of luck!
