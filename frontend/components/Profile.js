@@ -119,39 +119,43 @@ const Profile = () => {
             </ul>
             <h3>Order Summaries</h3>
             <Query query={USER_ORDERS_QUERY}>
-              {({ data }) => {
-                return data.orders.map(order => (
-                  <Link
-                    key={order.id}
-                    href={{
-                      pathname: 'order',
-                      query: { id: order.id },
-                    }}
-                  >
-                    <a>
-                      <OrderSummary>
-                        <p className="field">
-                          <span>ID</span>
-                          <span>{order.id}</span>
-                        </p>
-                        <p className="field">
-                          <span>Date</span>
-                          <span>
-                            {format(
-                              Date.parse(order.createdAt),
-                              'MMMM d, YYY h:mm a',
-                            )}
-                          </span>
-                        </p>
-                        <p className="field">
-                          <span>Total</span>
-                          <span>{formatMoney(order.total)}</span>
-                        </p>
-                      </OrderSummary>
-                    </a>
-                  </Link>
-                ))
-              }}
+              {({ data, loading }) =>
+                loading ? (
+                  <p>⚡ Loading... ⚡</p>
+                ) : (
+                  data.orders.map(order => (
+                    <Link
+                      key={order.id}
+                      href={{
+                        pathname: 'order',
+                        query: { id: order.id },
+                      }}
+                    >
+                      <a>
+                        <OrderSummary>
+                          <p className="field">
+                            <span>ID</span>
+                            <span>{order.id}</span>
+                          </p>
+                          <p className="field">
+                            <span>Date</span>
+                            <span>
+                              {format(
+                                Date.parse(order.createdAt),
+                                'MMMM d, YYY h:mm a',
+                              )}
+                            </span>
+                          </p>
+                          <p className="field">
+                            <span>Total</span>
+                            <span>{formatMoney(order.total)}</span>
+                          </p>
+                        </OrderSummary>
+                      </a>
+                    </Link>
+                  ))
+                )
+              }
             </Query>
           </ProfileWrapper>
         )
