@@ -52,6 +52,10 @@ class OrderList extends Component {
         {({ data: { orders }, error, loading }) => {
           if (loading) return <p>⚡ Loading... ⚡</p>
           if (error) return <ErrorMessage error={error} />
+          const itemCount = order => {
+            return order.items.reduce((total, item) => total + item.quantity, 0)
+          }
+          const productCount = order => order.items.length
           return (
             <MainWrap>
               <Head>
@@ -71,13 +75,13 @@ class OrderList extends Component {
                       <a>
                         <div className="order-meta">
                           <p>
-                            {order.items.reduce(
-                              (total, item) => total + item.quantity,
-                              0,
-                            )}{' '}
-                            Items
+                            {itemCount(order)} Item
+                            {itemCount(order) !== 1 && 's'}
                           </p>
-                          <p>{order.items.length} Products</p>
+                          <p>
+                            {productCount(order)} Product
+                            {productCount(order) !== 1 && 's'}
+                          </p>
                           <p>
                             {formatDistance(
                               Date.parse(order.createdAt),
