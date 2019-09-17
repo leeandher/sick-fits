@@ -65,7 +65,13 @@ class Items extends Component {
           }}
         >
           {({ data, error, loading }) => {
-            if (loading) return <p>⚡ Loading... ⚡</p>
+            if (loading)
+              return (
+                <p>
+                  ⚡ Loading (I'm on a free Heroku dyno, so this may initially
+                  take around 45s, but then it'll be speedy!)... ⚡
+                </p>
+              )
             if (error) return <p>❌ Error ❌: {error.message}</p>
             return (
               <MainWrap>
